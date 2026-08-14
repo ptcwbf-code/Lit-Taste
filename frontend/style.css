@@ -66,6 +66,15 @@ body {
 }
 h1 { font-size: 38px; font-weight: 500; line-height: 1.3; margin: 0 0 18px; letter-spacing: .01em; }
 .lead { color: var(--ink-dim); font-size: 16.5px; margin: 0 auto 36px; max-width: 480px; }
+.howto {
+  max-width: 500px; margin: -12px auto 32px;
+  padding: 14px 20px;
+  border: 1px solid var(--line); border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink-dim); font-size: 14.5px; line-height: 1.8;
+  text-align: left;
+}
+.howto strong { color: var(--gold); font-weight: 600; }
 
 button.primary, button.ghost {
   font-family: var(--mono); font-size: 13px; letter-spacing: .1em; cursor: pointer;
