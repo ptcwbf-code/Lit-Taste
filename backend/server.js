@@ -1,6 +1,7 @@
 // Backend：Node.js + Express + PostgreSQL。
 // 它做的事：接收浏览器的 HTTP 请求 -> 查询/写入 Postgres -> 把结果变成 JSON 返回。
 const path = require('node:path');
+const fs = require('node:fs');
 const express = require('express');
 const { Pool } = require('pg');
 const questions = require('./questions.js');
@@ -266,13 +267,40 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: '服务器内部错误：' + (err && err.message ? err.message : String(err)) });
 });
 
+// 启动时确保数据库就绪：应用 schema（CREATE TABLE IF NOT EXISTS，幂等），
+// 作家表为空时才导入 72 位作家。这样 Render 上启动命令只需 `node server.js`，
+// 不需要单独的 seed 步骤（也避免了 seed.js 在 database/ 下解析不到 pg 的问题）。
+async function ensureSeeded() {
+  const schema = fs.readFileSync(path.join(__dirname, '..', 'database', 'init.sql'), 'utf8');
+  await pool.query(schema);
+  const { n } = (await pool.query('SELECT COUNT(*)::int AS n FROM writers')).rows[0];
+  if (n === 0) {
+    const writers = require('../database/writers.js');
+    const insert = `
+      INSERT INTO writers
+        (name, region_era, works, narrative, lyric, psychology, imagination,
+         society, philosophy, form, readability, humor, desire, tags)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+    `;
+    for (const w of writers) {
+      await pool.query(insert, [
+        w.name, w.region_era, w.works,
+        w.narrative, w.lyric, w.psychology, w.imagination,
+        w.society, w.philosophy, w.form, w.readability, w.humor, w.desire, w.tags,
+      ]);
+    }
+    console.log('已导入 ' + writers.length + ' 位作家');
+  }
+}
+
 (async () => {
   try {
     await pool.query('SELECT 1');
-    console.log('Postgres 已连接');
+    await ensureSeeded();
+    console.log('Postgres 已连接并就绪');
   } catch (e) {
-    console.error('Postgres 连接失败：' + e.message);
-    console.error('请设置 DATABASE_URL 环境变量，并先运行 node database/seed.js 建表、导入作家。');
+    console.error('Postgres 连接或初始化失败：' + e.message);
+    console.error('请确认 DATABASE_URL 环境变量指向一个可用的 Postgres。');
     process.exit(1);
   }
   app.listen(PORT, () => {
