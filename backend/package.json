@@ -1,0 +1,14 @@
+{
+  "name": "literary-taste-backend",
+  "version": "1.0.0",
+  "description": "Express + SQLite backend for the literary-taste quiz",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1",
+    "pg": "^8.23.0"
+  }
+}

@@ -1,0 +1,12 @@
+# 依赖：Render 上由 npm install 重新生成，不提交
+node_modules/
+
+# 旧的 SQLite 数据库文件（已迁到 Postgres，不再需要）
+*.db
+
+# 本地工具配置
+.claude/
+
+# 系统文件
+.DS_Store
+Thumbs.db
