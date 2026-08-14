@@ -109,12 +109,6 @@ const HIDDEN_K = 2;
 // 无偏好检测阈值：回避类选项占比 ≥ 0.5 时，判定"信号偏弱"，核心维向中性(5)收缩。
 // 分母是"出现了回避选项的题目数"，不是总题数，所以一个系统性回避的用户会接近 1.0。
 const AVOID_THRESHOLD = 0.5;
-// 多选第 2 项的折扣系数（第 1 项满权重 1，第 2 项 × 0.5）。推导：
-// 题库系数分三档 ±1/±2/±3（弱/标准/强）。"第 2 偏好"语义上比"第 1 偏好"弱一档，
-// 弱一档 = 系数减半（±2→±1、±3→±1.5），故取 0.5。这恰好把第 2 项映射回"弱信号"档——
-// 既不让次优偏好喧宾夺主，也不丢弃它；与"净化原则砍掉单选项 ±1 小尾巴"互补：
-// ±1 只在"次优偏好"这一合法场景里被重建。
-const SECOND_WEIGHT = 0.5;
 // 用户侧对比增强系数：匹配前把用户画像相对其自身均值放大，让"温和偏好"显现出形状、
 // 让"全平用户"诚实归为无形状。K 取 1.8（1.5~2.0 可调）：乘子过大→温和偏好被放大成尖峰，
 // 可能误伤真·全能用户；过小→平用户仍被"平全能作家"（全维 6~10 无低谷）过度匹配。
@@ -135,22 +129,19 @@ function computeProfile(answers, pool) {
   let avoidCount = 0;      // 选"回避/翻篇/绕开"类选项的次数
   let avoidAvailable = 0;  // 出现了回避类选项的题目数（分母：衡量"有机会回避时回避得多频繁"）
 
-  // 把一个选项的向量累加进各维（主层选项与追问层选项共用这一套逻辑）。
-  // weight 是该选项的偏好权重：第 1 项 = 1（满权重），第 2 项 = SECOND_WEIGHT（半权重）。
-  // 折扣只作用在"系数"上（分子），touch 计数（分母）仍按 1 记——因为用户确实做出了一个选择，
-  // 只是信号更弱；若折扣 count（分母）反而会因分母变小而放大信号，方向就错了。
-  const apply = (opt, weight = 1) => {
+  // 把一个选项的向量累加进各维（主层选项与追问层选项共用这一套逻辑）。每题单选，满权重记入。
+  const apply = (opt) => {
     if (!opt) return; // 无效选择直接跳过，而不是终止整个循环
-    if (opt.avoid) avoidCount += weight; // 次选回避记半权重（与向量折扣一致），避免"偶尔回避"被误判为系统性回避
+    if (opt.avoid) avoidCount++;
     for (const d of DIMS) {
       const v = opt.vector && opt.vector[d];
-      if (v) { core[d] += v * weight; coreCount[d]++; }
+      if (v) { core[d] += v; coreCount[d]++; }
     }
     for (const d of HIDDEN) {
       const v = opt.hidden && opt.hidden[d];
-      if (v) { hidden[d] += v * weight; hiddenCount[d]++; }
+      if (v) { hidden[d] += v; hiddenCount[d]++; }
     }
-    if (typeof opt.patience === 'number') { patienceSum += 5 + (opt.patience - 5) * weight; patienceCount++; }
+    if (typeof opt.patience === 'number') { patienceSum += opt.patience; patienceCount++; }
   };
 
   for (const a of answers) {
@@ -158,12 +149,12 @@ function computeProfile(answers, pool) {
     if (!q) continue;
     if (q.options.some((o) => o.avoid)) avoidAvailable++;
     if (q.followUp && q.followUp.options.some((o) => o.avoid)) avoidAvailable++;
-    // selections 是有序数组：下标 0 = 第 1 项（满权重），下标 1 = 第 2 项（半权重）。最多取前 2 项。
-    (a.selections || []).slice(0, 2).forEach((sel, rank) => {
-      apply(q.options.find((o) => o.id === sel), rank === 0 ? 1 : SECOND_WEIGHT);
+    // 每题单选：只取 selections 的第 1 项（前端只允许选一项；即便传入多项也仅计第一项）。
+    (a.selections || []).slice(0, 1).forEach((sel) => {
+      apply(q.options.find((o) => o.id === sel));
     });
-    // 追问分支：选完第一层后再答的第二层（单选，满权重）。
-    if (q.followUp && a.followUp) apply(q.followUp.options.find((o) => o.id === a.followUp), 1);
+    // 追问分支：选完第一层后再答的第二层（单选）。
+    if (q.followUp && a.followUp) apply(q.followUp.options.find((o) => o.id === a.followUp));
   }
 
   // Laplace 平滑：除以"触及次数 + K"，让单个强选择只轻微抬高、持续触及才趋近满分。

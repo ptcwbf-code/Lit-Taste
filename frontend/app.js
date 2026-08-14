@@ -81,9 +81,8 @@ function renderScenario() {
 
   const sel = a.selections;
   const optHtml = q.options.map((o) => {
-    const rank = sel.indexOf(o.id); // -1 未选；0 = 第 1 项；1 = 第 2 项
-    const key = rank >= 0 ? (rank + 1) : o.id; // 选中的显示排名序号，未选的显示选项字母
-    return '<button class="option' + (rank >= 0 ? ' selected' : '') + '" data-id="' + o.id + '"><span class="opt-key">' + key + '</span>' + o.text + '</button>';
+    const selected = sel.includes(o.id);
+    return '<button class="option' + (selected ? ' selected' : '') + '" data-id="' + o.id + '"><span class="opt-key">' + o.id + '</span>' + o.text + '</button>';
   }).join('');
 
   document.getElementById('scenario').innerHTML = '' +
@@ -105,10 +104,8 @@ function renderScenario() {
 function select(btn) {
   const sel = state.answers[state.idx].selections;
   const id = btn.dataset.id;
-  const i = sel.indexOf(id);
-  if (i >= 0) sel.splice(i, 1);          // 已选中 → 再点取消（第 2 项会自动升为第 1 项）
-  else if (sel.length < 2) sel.push(id); // 未满两项 → 按点击顺序加入（第 1 / 第 2）
-  else sel[1] = id;                       // 已满两项 → 替换第 2 项
+  if (sel[0] === id) sel.length = 0; // 点已选项 → 取消选择
+  else sel[0] = id;                   // 单选：换成这一项
   renderScenario();
 }
 
