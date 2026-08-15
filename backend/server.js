@@ -182,6 +182,21 @@ app.get('/api/tests/:id/questions', (req, res) => {
 app.post('/api/tests/:id/results', wrap(async (req, res) => {
   const t = tests.get(req.params.id);
   if (!t) { res.status(404).json({ error: '测试不存在' }); return; }
+  const submissionId = (req.body && req.body.submissionId) || null;
+
+  // 幂等重试：同一个 submissionId 已经算过并入库，直接返回旧结果，避免重复写库。
+  // （前端在"响应丢失"后会重试并带上同一个 submissionId，这里把重试变成安全的。）
+  if (submissionId) {
+    const prev = await pool.query(
+      'SELECT result_json FROM results WHERE submission_id = $1 AND test_id = $2',
+      [submissionId, t.id]
+    );
+    if (prev.rowCount) {
+      res.json(JSON.parse(prev.rows[0].result_json));
+      return;
+    }
+  }
+
   const answers = req.body && req.body.answers;
   if (!Array.isArray(answers) || answers.length === 0) {
     res.status(400).json({ error: '缺少 answers' });
@@ -253,8 +268,8 @@ app.post('/api/tests/:id/results', wrap(async (req, res) => {
   };
 
   await pool.query(
-    'INSERT INTO results (test_id, result_json) VALUES ($1, $2)',
-    [t.id, JSON.stringify(result)]
+    'INSERT INTO results (test_id, result_json, submission_id) VALUES ($1, $2, $3) ON CONFLICT (submission_id) DO NOTHING',
+    [t.id, JSON.stringify(result), submissionId]
   );
 
   res.json(result);

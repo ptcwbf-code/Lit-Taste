@@ -1,14 +1,27 @@
 // 前端：纯 HTML + CSS + Vanilla JavaScript。
 // 只负责三件事：把目录画出来、把题目画出来、把结果画出来。算分和匹配都在后端。
 // 维度、标签、文案全部来自后端返回的 test 元信息（state.test），这里不再写死任何维度。
-const state = { test: null, questions: [], idx: 0, answers: [], result: null, count: 24, fromHistory: false, inFollowUp: false };
+const state = { test: null, questions: [], idx: 0, answers: [], result: null, count: 24, fromHistory: false, inFollowUp: false, submissionId: null };
 
-// 统一的 fetch 封装：非 2xx 时抛出带错误信息的异常，避免静默失败
-async function api(url, options) {
-  const res = await fetch(url, options);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || ('请求失败 (' + res.status + ')'));
-  return data;
+// 每次答题生成一个唯一 submissionId：提交结果时带上，后端按它做幂等去重，
+// 这样"响应丢失后重试"不会产生重复历史记录。
+function newSubmissionId() {
+  return 's_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+}
+
+// 统一的 fetch 封装：非 2xx 时抛出带错误信息的异常，避免静默失败。
+// timeoutMs 可选：超时会中止请求（抛 AbortError），用于提交这类不能无限等待的调用。
+async function api(url, options = {}, timeoutMs) {
+  const ctrl = new AbortController();
+  const timer = timeoutMs ? setTimeout(() => ctrl.abort(), timeoutMs) : null;
+  try {
+    const res = await fetch(url, { ...options, signal: ctrl.signal });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || ('请求失败 (' + res.status + ')'));
+    return data;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
 
 function show(id) {
@@ -95,6 +108,7 @@ async function startQuiz() {
     state.questions = qs;
     state.idx = 0;
     state.answers = [];
+    state.submissionId = newSubmissionId();
     state.fromHistory = false;
     state.inFollowUp = false;
     show('quiz');
@@ -200,17 +214,45 @@ function prev() {
 
 async function finish() {
   document.getElementById('scenario').innerHTML = '<div class="scenario-card"><p class="lead">正在计算结果……</p></div>';
-  try {
-    const data = await api('/api/tests/' + state.test.id + '/results', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers: state.answers }),
-    });
-    state.result = data;
-    renderResults(data);
-  } catch (e) {
-    document.getElementById('scenario').innerHTML = '<div class="scenario-card"><p class="lead">计算出错了</p><p class="empty">' + e.message + '。请刷新页面重试。</p></div>';
+  const url = '/api/tests/' + state.test.id + '/results';
+  const body = JSON.stringify({ answers: state.answers, submissionId: state.submissionId });
+  let lastErr = null;
+
+  // 提交最多重试 3 次：网络断了 / 响应丢了（fail to fetch、超时）就重试；
+  // 服务端已算好的情况由 submissionId 幂等兜底，重试不会产生重复记录。
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const data = await api(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      }, 60000);
+      state.result = data;
+      renderResults(data);
+      return;
+    } catch (e) {
+      lastErr = e;
+      const retriable = e.name === 'AbortError' || /failed to fetch|networkerror|load failed/i.test(String(e.message || ''));
+      if (!retriable || attempt === 3) break;
+      document.getElementById('scenario').innerHTML =
+        '<div class="scenario-card"><p class="lead">网络不太稳，正在重试（第 ' + attempt + ' 次）……</p></div>';
+      await new Promise((r) => setTimeout(r, 1500 * attempt));
+    }
   }
+
+  const msg = (lastErr && lastErr.message) ? lastErr.message : '';
+  document.getElementById('scenario').innerHTML =
+    '<div class="scenario-card">' +
+      '<p class="lead">计算出错了</p>' +
+      '<p class="empty">' + msg + '</p>' +
+      '<p class="empty">别担心：结果多半已经保存了。</p>' +
+      '<div class="quiz-nav">' +
+        '<button id="retrySubmitBtn" class="primary">再试一次</button>' +
+        '<button id="gotoHistoryBtn" class="ghost">查看历史记录</button>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('retrySubmitBtn').addEventListener('click', finish);
+  document.getElementById('gotoHistoryBtn').addEventListener('click', openHistory);
 }
 
 // —— 结果 ——

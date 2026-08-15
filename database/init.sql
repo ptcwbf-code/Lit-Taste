@@ -14,3 +14,8 @@ CREATE TABLE IF NOT EXISTS results (
   created_at   TIMESTAMPTZ DEFAULT now(),
   result_json  TEXT NOT NULL         -- 完整结果快照（JSON 文本），用于历史回看
 );
+
+-- 幂等迁移：submission_id 用于提交幂等——前端重试时按它去重，避免"响应丢失"造成重复历史记录。
+-- ADD COLUMN / CREATE INDEX 都带 IF NOT EXISTS，每次启动执行也是幂等的。
+ALTER TABLE results ADD COLUMN IF NOT EXISTS submission_id TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS results_submission_id_idx ON results(submission_id);
