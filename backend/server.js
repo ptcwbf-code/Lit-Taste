@@ -9,7 +9,7 @@ const { DIMS, DIM_LABELS, computeProfile, matchWriters, describeProfile, describ
 const writersDetail = require('./writers-detail.js');
 
 const app = express();
-const PORT = 3001; // 3000 已被另一个进程占用，这里改用 3001
+const PORT = process.env.PORT || 3001; // Render 会注入动态端口；本地回退 3001（3000 被占用）
 const QUESTIONS_PER_TEST = 24; // 标准版默认题数（前端会传 count 覆盖）
 
 // 数据库连接：优先读 DATABASE_URL（Render/Neon/Supabase 都会注入），本地开发回退到 localhost。
@@ -295,7 +295,17 @@ async function ensureSeeded() {
 
 (async () => {
   try {
-    await pool.query('SELECT 1');
+    // 启动时连接可能撞上 Neon 免费档的"冷启动"（休眠后首次连接较慢），重试几次更稳。
+    let connected = false;
+    for (let i = 0; i < 5 && !connected; i++) {
+      try {
+        await pool.query('SELECT 1');
+        connected = true;
+      } catch (e) {
+        if (i === 4) throw e;
+        await new Promise((r) => setTimeout(r, 3000));
+      }
+    }
     await ensureSeeded();
     console.log('Postgres 已连接并就绪');
   } catch (e) {
