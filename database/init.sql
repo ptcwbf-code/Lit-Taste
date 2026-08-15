@@ -1,39 +1,16 @@
--- Schema for the literary-taste app (PostgreSQL).
--- This file is applied by database/seed.js, which connects via DATABASE_URL and runs it.
+-- Schema for the quiz platform (PostgreSQL).
+-- This file is applied by backend/server.js on startup (CREATE TABLE IF NOT EXISTS, 幂等)。
+--
+-- 通用结果表：只存"哪个测试 + 什么时候 + 完整结果快照"。
+-- 每个测试的维度/实体/题目/文案都在 tests/<id>/ 的 JS 内容包里，不进数据库——
+-- 因为不同测试的维度不同（文学口味 10 维、未来的动物测试是另一套维），
+-- 用固定列反而表达不了。result_json 里已经包含 8 维雷达数据、匹配结果、文案。
+--
+-- 旧的 writers 表（作家 10 维分）已废弃：实体已移到 tests/<id>/entities.js。
 
--- 作家表：每位作家的 10 个维度分数（0-10）
-CREATE TABLE IF NOT EXISTS writers (
-  id           SERIAL PRIMARY KEY,
-  name         TEXT NOT NULL,      -- 作家名
-  region_era   TEXT,               -- 地区 / 时代
-  works        TEXT,               -- 代表作品
-  narrative    INTEGER,            -- 叙事
-  lyric        INTEGER,            -- 抒情
-  psychology   INTEGER,            -- 心理
-  imagination  INTEGER,            -- 想象
-  society      INTEGER,            -- 社会
-  philosophy   INTEGER,            -- 哲思
-  form         INTEGER,            -- 形式
-  readability  INTEGER,            -- 轻快 / 直接
-  humor        INTEGER,            -- 幽默 / 反讽
-  desire       INTEGER,            -- 欲望 / 渴求
-  tags         TEXT                -- 主要标签
-);
-
--- 结果表：每一次完成的测试，存下用户的 10 个维度分 + 匹配到的作家
 CREATE TABLE IF NOT EXISTS results (
   id           SERIAL PRIMARY KEY,
+  test_id      TEXT NOT NULL,        -- 哪个测试（对应 tests/<id>）
   created_at   TIMESTAMPTZ DEFAULT now(),
-  narrative    DOUBLE PRECISION,
-  lyric        DOUBLE PRECISION,
-  psychology   DOUBLE PRECISION,
-  imagination  DOUBLE PRECISION,
-  society      DOUBLE PRECISION,
-  philosophy   DOUBLE PRECISION,
-  form         DOUBLE PRECISION,
-  readability  DOUBLE PRECISION,
-  humor        DOUBLE PRECISION,
-  desire       DOUBLE PRECISION,
-  matches      TEXT,              -- 匹配到的作家名（JSON 文本）
-  result_json  TEXT               -- 完整结果快照（JSON 文本），用于历史回看
+  result_json  TEXT NOT NULL         -- 完整结果快照（JSON 文本），用于历史回看
 );

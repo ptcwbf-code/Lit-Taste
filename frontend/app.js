@@ -1,6 +1,7 @@
 // 前端：纯 HTML + CSS + Vanilla JavaScript。
-// 只负责两件事：把题目画出来、把结果画出来。算分和匹配都在后端。
-const state = { questions: [], idx: 0, answers: [], result: null, count: 24, fromHistory: false, inFollowUp: false };
+// 只负责三件事：把目录画出来、把题目画出来、把结果画出来。算分和匹配都在后端。
+// 维度、标签、文案全部来自后端返回的 test 元信息（state.test），这里不再写死任何维度。
+const state = { test: null, questions: [], idx: 0, answers: [], result: null, count: 24, fromHistory: false, inFollowUp: false };
 
 // 统一的 fetch 封装：非 2xx 时抛出带错误信息的异常，避免静默失败
 async function api(url, options) {
@@ -10,14 +11,75 @@ async function api(url, options) {
   return data;
 }
 
-const DIM_ORDER = ['narrative', 'lyric', 'psychology', 'imagination', 'society', 'philosophy', 'form', 'readability', 'humor', 'desire'];
-const DIM_LABELS = { narrative: '叙事', lyric: '抒情', psychology: '心理', imagination: '想象', society: '社会', philosophy: '哲思', form: '形式', readability: '轻快', humor: '幽默', desire: '欲望' };
+function show(id) {
+  for (const s of ['catalog', 'intro', 'quiz', 'results', 'history']) {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  }
+  document.getElementById('homeBtn').classList.toggle('hidden', id === 'catalog');
+  window.scrollTo(0, 0);
+}
 
 async function init() {
+  document.getElementById('homeBtn').addEventListener('click', loadCatalog);
   document.getElementById('startBtn').addEventListener('click', startQuiz);
   document.getElementById('historyBtn').addEventListener('click', openHistory);
   document.getElementById('backBtn').addEventListener('click', () => show('intro'));
+  loadCatalog();
+}
+
+// —— 目录页 ——
+async function loadCatalog() {
+  show('catalog');
+  document.getElementById('wordmark').textContent = '测试台 · Quiz Platform';
+  try {
+    const list = await api('/api/tests');
+    renderCatalog(list);
+  } catch (e) {
+    document.getElementById('catalogBody').innerHTML = '<p class="empty">加载失败：' + e.message + '</p>';
+  }
+}
+
+function renderCatalog(list) {
+  if (!list.length) {
+    document.getElementById('catalogBody').innerHTML = '<p class="empty">还没有测试。</p>';
+    return;
+  }
+  document.getElementById('catalogBody').innerHTML = list.map((t) =>
+    '<div class="catalog-card" data-id="' + t.id + '">' +
+      '<div class="catalog-card-head">' +
+        '<span class="catalog-badge">' + (t.metaBadge || '测试') + '</span>' +
+        '<span class="catalog-count">' + t.questionCount + ' 题 · ' + t.entityCount + ' 个候选</span>' +
+      '</div>' +
+      '<h2 class="catalog-title">' + t.heading + '</h2>' +
+      '<p class="catalog-lead">' + t.lead + '</p>' +
+    '</div>'
+  ).join('');
+  document.querySelectorAll('.catalog-card').forEach((c) => c.addEventListener('click', () => openTest(c.dataset.id)));
+}
+
+async function openTest(id) {
+  try {
+    const t = await api('/api/tests/' + id);
+    state.test = t;
+    renderIntro(t);
+    show('intro');
+  } catch (e) {
+    alert('加载测试失败：' + e.message);
+  }
+}
+
+function renderIntro(t) {
+  document.getElementById('wordmark').textContent = t.wordmark || t.title;
+  document.getElementById('introKicker').textContent = t.metaBadge || '';
+  document.getElementById('introHeading').textContent = t.heading;
+  document.getElementById('introLead').textContent = t.lead || '';
+  const modes = (t.modes && t.modes.length) ? t.modes : [{ count: 24, label: '标准版', desc: '' }];
+  const defIdx = modes.length > 1 ? 1 : 0;
+  document.getElementById('modes').innerHTML = modes.map((m, i) =>
+    '<button class="mode' + (i === defIdx ? ' selected' : '') + '" data-count="' + m.count + '"><strong>' + m.label + '</strong><span>' + (m.desc || '') + '</span></button>'
+  ).join('');
   document.querySelectorAll('.mode').forEach((btn) => btn.addEventListener('click', () => selectMode(btn)));
+  state.count = Number(modes[defIdx].count);
 }
 
 function selectMode(btn) {
@@ -26,16 +88,10 @@ function selectMode(btn) {
   state.count = Number(btn.dataset.count);
 }
 
-function show(id) {
-  for (const s of ['intro', 'quiz', 'results', 'history']) {
-    document.getElementById(s).classList.toggle('hidden', s !== id);
-  }
-  window.scrollTo(0, 0);
-}
-
+// —— 答题 ——
 async function startQuiz() {
   try {
-    const qs = await api('/api/questions?count=' + state.count);
+    const qs = await api('/api/tests/' + state.test.id + '/questions?count=' + state.count);
     state.questions = qs;
     state.idx = 0;
     state.answers = [];
@@ -87,7 +143,7 @@ function renderScenario() {
 
   document.getElementById('scenario').innerHTML = '' +
     '<div class="scenario-card">' +
-      (q.context ? '<p class="scenario-bg' + (q.format === 'reaction' ? ' quote' : '') + '">' + q.context + '</p>' : '') +
+      (q.context ? '<p class="scenario-bg">' + q.context + '</p>' : '') +
       '<p class="prompt">' + q.prompt + '</p>' +
       '<div class="options">' + optHtml + '</div>' +
       '<div class="quiz-nav">' +
@@ -143,9 +199,9 @@ function prev() {
 }
 
 async function finish() {
-  document.getElementById('scenario').innerHTML = '<div class="scenario-card"><p class="lead">正在计算你的阅读口味……</p></div>';
+  document.getElementById('scenario').innerHTML = '<div class="scenario-card"><p class="lead">正在计算结果……</p></div>';
   try {
-    const data = await api('/api/results', {
+    const data = await api('/api/tests/' + state.test.id + '/results', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ answers: state.answers }),
@@ -157,18 +213,22 @@ async function finish() {
   }
 }
 
+// —— 结果 ——
 function renderResults(data) {
   show('results');
+  const t = data.test;
+  document.getElementById('wordmark').textContent = t.wordmark || t.title;
   const rb = document.getElementById('restartBtn');
   if (state.fromHistory) {
     rb.textContent = '返回历史';
     rb.onclick = () => openHistory();
   } else {
     rb.textContent = '再做一次';
-    rb.onclick = () => location.reload();
+    rb.onclick = () => openTest(state.test.id);
   }
   const m = data.match;
-  const radar = drawRadar(data.profile.core, m ? m.profile : null);
+  const entityLabel = t.entityLabel || '';
+  const radar = drawRadar(data.profile.core, m ? m.profile : null, t);
 
   const soulHtml = (data.soul || []).map((p) => '<p>' + p + '</p>').join('');
 
@@ -177,59 +237,62 @@ function renderResults(data) {
     '<div class="family-card' + (i === 0 ? ' top' : '') + '">' +
       '<div class="family-rank">' + rankLabel[i] + '</div>' +
       '<div class="family-body">' +
-        '<div class="family-name">' + f.name + '<span class="family-score">' + f.match.toFixed(1) + '</span></div>' +
-        '<div class="family-meta">' + f.region_era + ' · ' + f.works + '</div>' +
+        '<div class="family-name">' + f.name + '<span class="family-score">' + f.score.toFixed(1) + '</span></div>' +
+        (f.meta ? '<div class="family-meta">' + f.meta + '</div>' : '') +
         '<div class="family-why">' + f.why + '</div>' +
       '</div>' +
     '</div>'
   ).join('');
 
   const analysisHtml = (m.analysis || []).map((a) => '<p>' + a + '</p>').join('');
-
   const sharedHtml = (m.sharedDna && m.sharedDna.length)
-    ? '<div class="dna"><p class="dna-title">你们共享的文学 DNA</p><div class="dna-tags">' +
+    ? '<div class="dna"><p class="dna-title">' + (t.dnaTitle || '') + '</p><div class="dna-tags">' +
       m.sharedDna.map((d) => '<span class="dna-tag">' + d + '</span>').join('') + '</div></div>'
     : '';
-
-  const readingTipHtml = m.readingTip
-    ? '<div class="says"><p class="says-label">阅读提示</p><p class="says-text">' + m.readingTip + '</p></div>'
+  const tipHtml = m.tip
+    ? '<div class="says"><p class="says-label">' + (t.tipLabel || '') + '</p><p class="says-text">' + m.tip + '</p></div>'
     : '';
-
   const booksHtml = (data.books && data.books.length)
-    ? '<div class="books"><p class="books-title">为你推荐的书</p><div class="books-list">' +
+    ? '<div class="books"><p class="books-title">' + (t.booksTitle || '') + '</p><div class="books-list">' +
       data.books.map((b) => '<span class="book">' + b + '</span>').join('') + '</div></div>'
     : '';
-
   const caveatHtml = data.caveat ? '<p class="caveat">' + data.caveat + '</p>' : '';
 
+  const breakdownHtml = t.hasDifficulty
+    ? '风格 ' + m.breakdown.style.toFixed(1) + ' · 难度 ' + m.breakdown.difficulty.toFixed(1)
+    : '风格 ' + m.breakdown.style.toFixed(1);
+
   document.getElementById('resultsBody').innerHTML = '' +
-    '<p class="kicker">你的文学口味</p>' +
-    '<h1 class="type">' + data.readingType + '</h1>' +
+    '<p class="kicker">' + (t.resultKicker || '') + '</p>' +
+    '<h1 class="type">' + data.typeLabel + '</h1>' +
     (data.topDims && data.topDims.length ? '<p class="type-sub">你最看重的是「' + data.topDims.join('」与「') + '」</p>' : '') +
     caveatHtml +
     '<div class="soul">' + soulHtml + '</div>' +
-    '<div class="radar-wrap">' + radar + '<p class="legend">实线 = 你　·　虚线 = 最契合的作家</p></div>' +
-    '<div class="module-title">你的文学家族</div>' +
+    '<div class="radar-wrap">' + radar + '<p class="legend">实线 = 你　·　虚线 = 最契合的' + entityLabel + '</p></div>' +
+    '<div class="module-title">' + (t.familyTitle || '') + '</div>' +
     '<div class="family">' + familyHtml + '</div>' +
     '<div class="match-card">' +
-      '<p class="match-kicker">最契合的作家</p>' +
-      '<h2 class="match-name">' + m.name + '<span class="match-score">契合 ' + m.match.toFixed(1) + '</span></h2>' +
-      '<p class="match-meta">' + m.region_era + ' · ' + m.works + '</p>' +
-      '<p class="match-breakdown">风格 ' + m.breakdown.style.toFixed(1) + ' · 难度 ' + m.breakdown.difficulty.toFixed(1) + '</p>' +
-      (m.intro ? '<p class="match-intro">' + m.intro + '</p>' : '') +
-      (m.works_intro ? '<p class="match-works">' + m.works_intro + '</p>' : '') +
+      '<p class="match-kicker">最契合的' + entityLabel + '</p>' +
+      '<h2 class="match-name">' + m.name + '<span class="match-score">契合 ' + m.score.toFixed(1) + '</span></h2>' +
+      (m.meta ? '<p class="match-meta">' + m.meta + '</p>' : '') +
+      '<p class="match-breakdown">' + breakdownHtml + '</p>' +
+      (m.desc ? '<p class="match-intro">' + m.desc + '</p>' : '') +
+      (m.desc2 ? '<p class="match-works">' + m.desc2 + '</p>' : '') +
       '<div class="match-analysis">' + analysisHtml + '</div>' +
       sharedHtml +
-      readingTipHtml +
+      tipHtml +
       (m.quote ? '<blockquote class="match-quote">' + m.quote + '<cite>' + m.source + '</cite></blockquote>' : '') +
     '</div>' +
     booksHtml;
 }
 
+// —— 历史 ——
 async function openHistory() {
+  if (!state.test) return;
   show('history');
+  document.getElementById('historyTitle').textContent = state.test.heading + ' · 历史结果';
   try {
-    const list = await api('/api/results');
+    const list = await api('/api/tests/' + state.test.id + '/results');
     renderHistory(list);
   } catch (e) {
     document.getElementById('historyBody').innerHTML = '<p class="empty">加载历史失败：' + e.message + '</p>';
@@ -242,14 +305,15 @@ function renderHistory(list) {
     return;
   }
   document.getElementById('historyBody').innerHTML = list.map((r) => {
-    const top = (r.matches.best || []).slice(0, 3).join('、');
+    const res = r.result || {};
+    const top = res.match ? res.match.name : '';
     return '' +
       '<div class="history-card" data-id="' + r.id + '">' +
         '<div class="history-meta">' +
           '<span class="history-time">' + r.created_at + '</span>' +
           '<p class="history-matches">最契合：' + top + '</p>' +
         '</div>' +
-        '<div class="history-radar">' + drawRadar(r.core, null, 132, false) + '</div>' +
+        '<div class="history-radar">' + drawRadar(res.profile ? res.profile.core : {}, null, res.test, 132, false) + '</div>' +
         '<button class="history-del" data-id="' + r.id + '">删除</button>' +
       '</div>';
   }).join('');
@@ -261,6 +325,7 @@ async function viewHistory(id) {
   try {
     const data = await api('/api/results/' + id);
     state.fromHistory = true;
+    state.test = data.test || state.test;
     renderResults(data);
   } catch (e) {
     alert('加载这条记录失败：' + e.message);
@@ -277,9 +342,14 @@ async function deleteHistory(btn) {
   }
 }
 
-function drawRadar(user, writer, size, showLabels) {
+// —— 雷达图：维度与标签来自 test.dims ——
+function drawRadar(user, entity, test, size, showLabels) {
   size = size || 360;
-  const N = DIM_ORDER.length;
+  const dims = (test && test.dims) || [];
+  const keys = dims.map((d) => d.key);
+  const labelOf = Object.fromEntries(dims.map((d) => [d.key, d.label]));
+  const N = keys.length;
+  if (!N) return '';
   const cx = size / 2, cy = size / 2, R = size * 0.355;
   const angle = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / N;
   const pt = (v, i) => {
@@ -289,7 +359,7 @@ function drawRadar(user, writer, size, showLabels) {
 
   let s = '';
   for (const ring of [2.5, 5, 7.5, 10]) {
-    const pts = DIM_ORDER.map((_, i) => pt(ring, i).join(',')).join(' ');
+    const pts = keys.map((_, i) => pt(ring, i).join(',')).join(' ');
     s += '<polygon points="' + pts + '" class="ring"/>';
   }
   for (let i = 0; i < N; i++) {
@@ -297,13 +367,13 @@ function drawRadar(user, writer, size, showLabels) {
     s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + x + '" y2="' + y + '" class="axis"/>';
     if (showLabels !== false) {
       const [lx, ly] = pt(12.6, i);
-      s += '<text x="' + lx + '" y="' + ly + '" class="label" text-anchor="middle" dominant-baseline="middle">' + DIM_LABELS[DIM_ORDER[i]] + '</text>';
+      s += '<text x="' + lx + '" y="' + ly + '" class="label" text-anchor="middle" dominant-baseline="middle">' + (labelOf[keys[i]] || keys[i]) + '</text>';
     }
   }
-  const pathOf = (obj) => 'M' + DIM_ORDER.map((d, i) => pt(obj[d] == null ? 5 : obj[d], i).join(' ')).join(' L ') + ' Z';
+  const pathOf = (obj) => 'M' + keys.map((d, i) => pt(obj && obj[d] != null ? obj[d] : 5, i).join(' ')).join(' L ') + ' Z';
   s += '<path d="' + pathOf(user) + '" class="user-poly"/>';
-  if (writer) {
-    s += '<path d="' + pathOf(writer) + '" class="writer-poly"/>';
+  if (entity) {
+    s += '<path d="' + pathOf(entity) + '" class="writer-poly"/>';
   }
   return '<svg viewBox="0 0 ' + size + ' ' + size + '" class="radar' + (size < 360 ? ' radar-mini' : '') + '">' + s + '</svg>';
 }

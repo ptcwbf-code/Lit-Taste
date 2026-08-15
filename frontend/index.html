@@ -3,39 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>阅读口味 · 文学契合测试</title>
+  <title>测试台 · 找到与你最契合的人</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="shell">
 
     <header class="masthead">
-      <span class="wordmark">阅读口味 · Reading Profile</span>
-      <span class="meta">十维测量</span>
+      <span class="wordmark" id="wordmark">测试台 · Quiz Platform</span>
+      <button id="homeBtn" class="link home-link">← 全部测试</button>
     </header>
 
-    <!-- 开场 -->
-    <section id="intro" class="screen">
-      <svg class="mark-lg" viewBox="0 0 48 48" aria-hidden="true">
-        <g stroke="currentColor" fill="none" stroke-width="1">
-          <line x1="24" y1="2" x2="24" y2="46"/>
-          <line x1="2" y1="24" x2="46" y2="24"/>
-          <line x1="8.4" y1="8.4" x2="39.6" y2="39.6"/>
-          <line x1="39.6" y1="8.4" x2="8.4" y2="39.6"/>
-          <circle cx="24" cy="24" r="6"/>
-          <circle cx="24" cy="24" r="16" stroke-width="0.5" opacity="0.6"/>
-        </g>
-      </svg>
-      <p class="kicker">Literary Profile</p>
-      <h1>找到与你最契合的作家</h1>
-      <p class="lead">你将面对几个不同的文学情境，做出你的选择。没有对错，只有偏好。</p>
-      <div class="modes">
-        <button class="mode" data-count="16"><strong>精简版</strong><span>16 题 · 约 3 分钟</span></button>
-        <button class="mode selected" data-count="24"><strong>标准版</strong><span>24 题 · 约 5 分钟</span></button>
-        <button class="mode" data-count="32"><strong>精确版</strong><span>32 题 · 更精确</span></button>
-        <button class="mode" data-count="99"><strong>全题库</strong><span>48 题 · 全部做完</span></button>
-      </div>
+    <!-- 目录 / 首页 -->
+    <section id="catalog" class="screen">
+      <p class="kicker">Quiz Platform</p>
+      <h1>选一个测试</h1>
+      <p class="lead">每个测试会给你几个情境，你凭直觉选。没有对错，只有偏好。</p>
+      <div id="catalogBody" class="catalog"></div>
+    </section>
+
+    <!-- 开场（某个测试的入口，内容由 JS 填充） -->
+    <section id="intro" class="screen hidden">
+      <p class="kicker" id="introKicker"></p>
+      <h1 id="introHeading"></h1>
+      <p class="lead" id="introLead"></p>
+      <div class="modes" id="modes"></div>
       <button id="startBtn" class="primary">开始测试</button>
+      <br>
       <button id="historyBtn" class="link">历史结果 →</button>
     </section>
 
@@ -59,14 +53,14 @@
 
     <!-- 历史 -->
     <section id="history" class="screen hidden">
-      <p class="kicker">Past Readings</p>
-      <h1>历史结果</h1>
+      <p class="kicker">Past Results</p>
+      <h1 id="historyTitle">历史结果</h1>
       <div id="historyBody"></div>
       <button id="backBtn" class="ghost">返回</button>
     </section>
 
     <footer class="foot">
-      <span>一个关于阅读口味的小实验</span>
+      <span>一个关于"你"的小实验 · Node + Express + PostgreSQL</span>
     </footer>
 
   </main>

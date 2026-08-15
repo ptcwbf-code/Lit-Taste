@@ -289,6 +289,25 @@ button.ghost:hover { border-color: var(--gold); background: var(--gold-soft); }
   font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-faint);
 }
 
+/* 目录 / 首页 */
+.home-link { margin: 0; }
+.home-link.hidden { display: none; }
+.catalog { display: flex; flex-direction: column; gap: 14px; }
+.catalog-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 22px 24px; cursor: pointer; transition: all .15s ease;
+}
+.catalog-card:hover { border-color: var(--gold); background: var(--surface-2); }
+.catalog-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.catalog-badge {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold); border: 1px solid var(--gold); border-radius: 2px; padding: 2px 8px;
+}
+.catalog-count { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--ink-faint); }
+.catalog-title { font-size: 21px; font-weight: 500; margin: 0 0 6px; }
+.catalog-lead { margin: 0; color: var(--ink-dim); font-size: 14.5px; }
+
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
