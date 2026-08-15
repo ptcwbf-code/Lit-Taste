@@ -98,12 +98,13 @@ const READING_TIPS = {
 // 省下的权重还给 style。readability 重定义为"轻快/直接"后，(form + (10-readability))/2
 // 仍可读作"形式难度 + 慢重程度"，D10 语义不变。
 const WEIGHTS = { style: 0.85, difficulty: 0.15 };
-// 核心维度归一化：按"该维每次触及的平均系数"缩放（除以触及次数，不做 Laplace 平滑）。
-// 这样分数只反映"偏好有多强"，与"做了多少题"无关——16 题和 48 题出来的雷达大小一致，
-// 都对齐作家的 0-10 量级。SCALE=1.25：强(±3)→8.75、标准(±2)→7.5、弱(±1)→6.25，
-// 既不会饱和到 10，也不会因稀疏而虚高；未触及的维度保持中性 5。
-const CORE_SCALE = 1.25;
-// 隐藏维度（歧义容忍/情绪强度）同尺度，系数最大 ±2：±2→7.5、±1→6.25。
+// 核心维度归一化：按"该维被吃到的信号比例"计分 —— core[d] / available[d]（0~1），
+// available[d] = 被抽到的题里该维所有选项系数之和（满分基准）。
+// 这样"你在该维的机会里选了多少次"决定分数：与做了多少题无关（16 题/48 题同尺度），
+// 也不会因偶发的一次选择而虚高——偶尔选一次幽默远低于"每次有机会都选"。
+// 未触及的维度保持中性 5；吃满全部机会 → 10（罕见）。
+const CORE_SCALE = 5;
+// 隐藏维度（歧义容忍/情绪强度）仍按平均系数缩放，系数最大 ±2：±2→7.5、±1→6.25。
 const HIDDEN_SCALE = 1.25;
 // 无偏好检测阈值：回避类选项占比 ≥ 0.5 时，判定"信号偏弱"，核心维向中性(5)收缩。
 // 分母是"出现了回避选项的题目数"，不是总题数，所以一个系统性回避的用户会接近 1.0。
@@ -120,7 +121,7 @@ function r1(x) { return Math.round(x * 10) / 10; }
 function computeProfile(answers, pool) {
   const byId = new Map(pool.map((q) => [q.id, q]));
   const core = Object.fromEntries(DIMS.map((d) => [d, 0]));
-  const coreCount = Object.fromEntries(DIMS.map((d) => [d, 0]));
+  const availSum = Object.fromEntries(DIMS.map((d) => [d, 0])); // 每个维在被抽到的题里"可及信号"之和（满分基准）
   const hidden = Object.fromEntries(HIDDEN.map((d) => [d, 0]));
   const hiddenCount = Object.fromEntries(HIDDEN.map((d) => [d, 0]));
   let patienceSum = 0;
@@ -134,7 +135,7 @@ function computeProfile(answers, pool) {
     if (opt.avoid) avoidCount++;
     for (const d of DIMS) {
       const v = opt.vector && opt.vector[d];
-      if (v) { core[d] += v; coreCount[d]++; }
+      if (v) { core[d] += v; }
     }
     for (const d of HIDDEN) {
       const v = opt.hidden && opt.hidden[d];
@@ -148,6 +149,9 @@ function computeProfile(answers, pool) {
     if (!q) continue;
     if (q.options.some((o) => o.avoid)) avoidAvailable++;
     if (q.followUp && q.followUp.options.some((o) => o.avoid)) avoidAvailable++;
+    // 累加"可及信号"：抽到这一题，该题所有选项的向量系数都算作对应维的满分基准（无论用户选没选）。
+    for (const o of q.options) for (const d of DIMS) { const v = o.vector && o.vector[d]; if (v) availSum[d] += v; }
+    if (q.followUp) for (const o of q.followUp.options) for (const d of DIMS) { const v = o.vector && o.vector[d]; if (v) availSum[d] += v; }
     // 每题单选：只取 selections 的第 1 项（前端只允许选一项；即便传入多项也仅计第一项）。
     (a.selections || []).slice(0, 1).forEach((sel) => {
       apply(q.options.find((o) => o.id === sel));
@@ -156,9 +160,9 @@ function computeProfile(answers, pool) {
     if (q.followUp && a.followUp) apply(q.followUp.options.find((o) => o.id === a.followUp));
   }
 
-  // 平均系数缩放：除以触及次数（不做 Laplace），让"偏好强度"而非"题量"决定分数。
-  // 未触及的维度保持中性 5；触及的维度按平均系数落在 5~8.75（核心）/ 5~7.5（隐藏）。
-  const coreNorm = Object.fromEntries(DIMS.map((d) => [d, r1(clamp(5 + (coreCount[d] ? core[d] / coreCount[d] : 0) * CORE_SCALE, 0, 10))]));
+  // 按"吃到的信号比例"归一化：core[d]/availSum[d] ∈ [0,1]，线性映射到 5~10。
+  // 未触及的维度保持中性 5；吃满全部机会 → 10（罕见）。
+  const coreNorm = Object.fromEntries(DIMS.map((d) => [d, r1(clamp(5 + (availSum[d] ? core[d] / availSum[d] : 0) * CORE_SCALE, 0, 10))]));
   const hiddenNorm = Object.fromEntries(HIDDEN.map((d) => [d, r1(clamp(5 + (hiddenCount[d] ? hidden[d] / hiddenCount[d] : 0) * HIDDEN_SCALE, 0, 10))]));
   const patience = patienceCount ? r1(patienceSum / patienceCount) : 5;
   const avoidRatio = avoidAvailable ? avoidCount / avoidAvailable : 0;
