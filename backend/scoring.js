@@ -254,7 +254,9 @@ function describeMatch(profile, entity, name, test) {
   } else {
     lines.push('你偏好的「' + topUser.map((d) => dimLabel(test, d)).join('」与「') + '」，' + p.subj + '用自己的方式回应了它。');
   }
-  lines.push(p.poss + '作品最突出的是「' + topEntity.map((d) => dimLabel(test, d)).join('」与「') + '」。');
+  // "最突出的是什么"的用词随实体类型而变：作家是"作品"，角色/动物是"身上"（由 test.copy.matchNoun 指定）。
+  const matchNoun = (test.copy && test.copy.matchNoun) || '作品';
+  lines.push(p.poss + matchNoun + '最突出的是「' + topEntity.map((d) => dimLabel(test, d)).join('」与「') + '」。');
   const diff = cfg(test).difficulty;
   if (diff) {
     const hard = entity[diff.hardDim];
