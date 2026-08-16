@@ -26,8 +26,8 @@ module.exports = {
   title: '最契合的音乐风格 · 你是谁',
   wordmark: '最契合的音乐风格 · Sound Profile',
   metaBadge: '声音十维',
-  heading: '你是哪一种声音',
-  lead: '几段氛围，凭直觉选。没有对错，只有你更像哪一种声音。',
+  heading: '你是哪一种音乐',
+  lead: '几段氛围，凭直觉选。没有对错，只有你更像哪一种音乐。',
   modes: [
     { count: 16, label: '精简版', desc: '16 题 · 约 3 分钟' },
     { count: 24, label: '标准版', desc: '24 题 · 约 5 分钟' },
