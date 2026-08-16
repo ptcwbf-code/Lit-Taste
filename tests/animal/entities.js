@@ -1,9 +1,9 @@
-// 36 种动物及其 10 维生态画像（0-10）。
+// 48 种动物及其 10 维生态画像（0-10）。
 // 维度顺序：social 群性 / circadian 昼夜 / territory 领地 / predation 掠食
 //          vigilance 警觉 / display 炫耀 / dormancy 蛰伏 / hoard 囤积
 //          curiosity 好奇 / combat 好斗
 //
-// 打分标尺（保证 36 种动物一致）：
+// 打分标尺（保证 48 种动物一致）：
 //   8–10  该动物的标志性特质（一说名字就想到的）
 //   5–7   有但不突出
 //   2–4   明显相反或很弱
@@ -62,4 +62,18 @@ module.exports = [
   // —— H. 信任与孤独（已灭绝 🦴）——
   { name: '🦤 渡渡鸟', species: '渡渡鸟 🦴', social: 6, circadian: 5, territory: 4, predation: 1, vigilance: 2, display: 3, dormancy: 6, hoard: 3, curiosity: 3, combat: 1, tags: '信任、温柔、真诚' },
   { name: '🦘 袋狼', species: '塔斯马尼亚虎 🦴', social: 2, circadian: 7, territory: 5, predation: 6, vigilance: 7, display: 3, dormancy: 7, hoard: 3, curiosity: 5, combat: 5, tags: '神秘、沉默、孤独' },
+
+  // —— I. 新加入的十二种 ——
+  { name: '🐖 猪', species: '家猪', social: 5, circadian: 5, territory: 4, predation: 2, vigilance: 3, display: 2, dormancy: 8, hoard: 4, curiosity: 8, combat: 2, tags: '通透、聪明、懂享受' },
+  { name: '🐄 牛', species: '家牛', social: 5, circadian: 4, territory: 6, predation: 2, vigilance: 4, display: 2, dormancy: 8, hoard: 8, curiosity: 2, combat: 4, tags: '勤恳、耐劳、深耕' },
+  { name: '🐒 猴子', species: '猕猴', social: 8, circadian: 5, territory: 3, predation: 4, vigilance: 5, display: 7, dormancy: 2, hoard: 3, curiosity: 9, combat: 7, tags: '机灵、顽皮、爱闹' },
+  { name: '🐕 狗', species: '家犬', social: 8, circadian: 5, territory: 5, predation: 4, vigilance: 7, display: 3, dormancy: 4, hoard: 4, curiosity: 6, combat: 6, tags: '忠诚、守护、无保留' },
+  { name: '🐪 骆驼', species: '双峰驼', social: 5, circadian: 5, territory: 8, predation: 3, vigilance: 5, display: 2, dormancy: 7, hoard: 9, curiosity: 4, combat: 4, tags: '耐旱、远行、能扛' },
+  { name: '🦚 孔雀', species: '蓝孔雀', social: 5, circadian: 5, territory: 7, predation: 2, vigilance: 5, display: 10, dormancy: 4, hoard: 2, curiosity: 4, combat: 3, tags: '华丽、自赏、从容' },
+  { name: '🐆 猎豹', species: '猎豹', social: 2, circadian: 5, territory: 4, predation: 9, vigilance: 6, display: 7, dormancy: 4, hoard: 2, curiosity: 6, combat: 3, tags: '迅捷、优雅、不恋战' },
+  { name: '🦂 蝎子', species: '黑粗尾蝎', social: 2, circadian: 6, territory: 5, predation: 5, vigilance: 8, display: 2, dormancy: 6, hoard: 3, curiosity: 4, combat: 8, tags: '低调、致命、防御' },
+  { name: '🐸 树蛙', species: '红眼树蛙', social: 3, circadian: 8, territory: 3, predation: 7, vigilance: 6, display: 4, dormancy: 6, hoard: 2, curiosity: 5, combat: 3, tags: '耐心、守候、夜行' },
+  { name: '🦏 犀牛', species: '白犀牛', social: 5, circadian: 4, territory: 8, predation: 4, vigilance: 4, display: 2, dormancy: 6, hoard: 3, curiosity: 2, combat: 8, tags: '温厚、护土、爆发' },
+  { name: '🦥 树懒', species: '褐喉树懒', social: 4, circadian: 4, territory: 3, predation: 1, vigilance: 2, display: 2, dormancy: 10, hoard: 2, curiosity: 2, combat: 1, tags: '极慢、节能、与世无争' },
+  { name: '🐹 仓鼠', species: '叙利亚仓鼠', social: 3, circadian: 7, territory: 5, predation: 2, vigilance: 5, display: 2, dormancy: 6, hoard: 9, curiosity: 4, combat: 2, tags: '深夜、囤积、独处' },
 ];
