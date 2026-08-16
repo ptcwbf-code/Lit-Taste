@@ -216,6 +216,29 @@ button.ghost:hover { border-color: var(--gold); background: var(--gold-soft); }
 .radar { max-width: 440px; width: 100%; }
 .legend { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-faint); margin-top: 12px; }
 
+/* 结果页 Hero（音乐风格专属渐变背景） */
+.hero { border-radius: 8px; padding: 40px 24px 34px; text-align: center; color: #fff; margin-bottom: 26px; text-shadow: 0 1px 14px rgba(0,0,0,.38); }
+.hero-emoji { font-size: 56px; line-height: 1; margin-bottom: 14px; }
+.hero-label { font-family: var(--mono); font-size: 11px; letter-spacing: .28em; text-transform: uppercase; opacity: .88; margin-bottom: 8px; }
+.hero-name { font-size: 34px; font-weight: 600; line-height: 1.2; }
+.hero-score { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; opacity: .92; margin-top: 14px; }
+
+/* 分享卡按钮 */
+.share-wrap { text-align: center; margin: 32px 0 0; }
+.share-wrap .primary { padding: 14px 40px; }
+
+/* 雷达折叠（details 原生折叠） */
+.radar-fold { margin: 36px 0; text-align: center; }
+.radar-fold summary {
+  display: inline-block; cursor: pointer; list-style: none;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold); border: 1px solid var(--line-strong); border-radius: 2px; padding: 9px 18px;
+}
+.radar-fold summary::-webkit-details-marker { display: none; }
+.radar-fold summary:hover { border-color: var(--gold); background: var(--gold-soft); }
+.radar-fold[open] summary { margin-bottom: 16px; }
+.radar-fold .radar-wrap { margin: 0; }
+
 .radar .ring { fill: none; stroke: var(--line); }
 .radar .axis { stroke: var(--line); }
 .radar .label { font-family: var(--mono); font-size: 11px; fill: var(--ink-dim); }

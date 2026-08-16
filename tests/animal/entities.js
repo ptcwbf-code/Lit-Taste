@@ -12,12 +12,12 @@
 // name 带 emoji，前端直接在结果名里显示大 emoji；species 是具体物种名（供 meta 副标题）。
 module.exports = [
   // —— A. 独行与聪明 ——
-  { name: '🦊 狐狸', species: '赤狐', social: 7, circadian: 6, territory: 5, predation: 6, vigilance: 6, display: 6, dormancy: 6, hoard: 5, curiosity: 8, combat: 5, tags: '聪明、狡黠、点到为止' },
+  { name: '🦊 狐狸', species: '赤狐', social: 7, circadian: 6, territory: 5, predation: 8, vigilance: 8, display: 6, dormancy: 6, hoard: 5, curiosity: 8, combat: 5, tags: '聪明、狡黠、点到为止' },
   { name: '🐈 猫', species: '家猫', social: 3, circadian: 7, territory: 7, predation: 5, vigilance: 6, display: 4, dormancy: 7, hoard: 4, curiosity: 6, combat: 5, tags: '自我、边界感、清醒' },
   { name: '🐙 章鱼', species: '普通章鱼', social: 2, circadian: 6, territory: 4, predation: 5, vigilance: 7, display: 2, dormancy: 7, hoard: 4, curiosity: 10, combat: 4, tags: '高智、孤独、深不可测' },
   { name: '🐦 乌鸦', species: '小嘴乌鸦', social: 5, circadian: 6, territory: 5, predation: 5, vigilance: 8, display: 3, dormancy: 5, hoard: 8, curiosity: 8, combat: 5, tags: '机警、适应力、独立' },
   { name: '🦎 变色龙', species: '高冠变色龙', social: 2, circadian: 6, territory: 6, predation: 4, vigilance: 8, display: 2, dormancy: 8, hoard: 3, curiosity: 7, combat: 2, tags: '伪装、适应、慢观察' },
-  { name: '🐍 蛇', species: '眼镜王蛇', social: 2, circadian: 7, territory: 6, predation: 4, vigilance: 6, display: 3, dormancy: 8, hoard: 4, curiosity: 4, combat: 7, tags: '冷静、隐忍、蜕变' },
+  { name: '🐍 蛇', species: '眼镜王蛇', social: 2, circadian: 7, territory: 4, predation: 4, vigilance: 6, display: 3, dormancy: 8, hoard: 4, curiosity: 4, combat: 5, tags: '冷静、隐忍、蜕变' },
 
   // —— B. 温柔与敏感 ——
   { name: '🦌 鹿', species: '梅花鹿', social: 5, circadian: 6, territory: 4, predation: 2, vigilance: 9, display: 4, dormancy: 6, hoard: 3, curiosity: 4, combat: 2, tags: '敏感、温顺、易惊' },
@@ -27,7 +27,7 @@ module.exports = [
   { name: '🐋 蓝鲸', species: '蓝鲸', social: 4, circadian: 6, territory: 3, predation: 3, vigilance: 5, display: 3, dormancy: 6, hoard: 4, curiosity: 6, combat: 2, tags: '温柔、庞大、孤独' },
 
   // —— C. 群居与暖意 ——
-  { name: '🦦 水獭', species: '海獭', social: 9, circadian: 6, territory: 4, predation: 4, vigilance: 5, display: 6, dormancy: 3, hoard: 3, curiosity: 7, combat: 4, tags: '爱玩、合群、有感染力' },
+  { name: '🦦 水獭', species: '海獭', social: 9, circadian: 6, territory: 4, predation: 4, vigilance: 5, display: 4, dormancy: 3, hoard: 3, curiosity: 7, combat: 4, tags: '爱玩、合群、有感染力' },
   { name: '🐝 蜜蜂', species: '西方蜜蜂', social: 10, circadian: 4, territory: 5, predation: 3, vigilance: 5, display: 3, dormancy: 3, hoard: 8, curiosity: 4, combat: 5, tags: '勤勉、利他、守秩序' },
   { name: '🐧 企鹅', species: '帝企鹅', social: 9, circadian: 5, territory: 6, predation: 5, vigilance: 6, display: 4, dormancy: 6, hoard: 6, curiosity: 5, combat: 5, tags: '抱团、忠贞、笨拙浪漫' },
   { name: '🕊 旅鸽', species: '旅鸽 🦴', social: 10, circadian: 5, territory: 2, predation: 2, vigilance: 5, display: 4, dormancy: 4, hoard: 3, curiosity: 4, combat: 2, tags: '归属、迁徙、深情' },

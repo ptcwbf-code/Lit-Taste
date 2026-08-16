@@ -272,6 +272,30 @@ function renderResults(data) {
   const entityLabel = t.entityLabel || '';
   const radar = drawRadar(data.profile.core, m ? m.profile : null, t);
 
+  // 音乐风格专属：结果带 gradient 时，顶部渲染渐变 Hero（emoji + 你是X + 契合分）
+  const heroSp = splitName(m && m.name);
+  const heroHtml = (m && m.gradient)
+    ? '<div class="hero" style="background:' + m.gradient + '">' +
+        (heroSp.emoji ? '<div class="hero-emoji">' + heroSp.emoji + '</div>' : '') +
+        '<div class="hero-label">你是</div>' +
+        '<div class="hero-name">' + heroSp.label + '</div>' +
+        '<div class="hero-score">契合 ' + m.score.toFixed(1) + '</div>' +
+      '</div>'
+    : '';
+  const legendHtml = '<p class="legend">实线 = 你　·　虚线 = 最契合的' + entityLabel + '</p>';
+  const radarHtml = t.foldRadar
+    ? '<details class="radar-fold"><summary>查看你的完整图谱 ▾</summary><div class="radar-wrap">' + radar + legendHtml + '</div></details>'
+    : '<div class="radar-wrap">' + radar + legendHtml + '</div>';
+
+  // Hero 已承担主名时，match-card 不再重复显示名字（弱化重复）
+  const nameHtml = heroHtml
+    ? ''
+    : '<h2 class="match-name">' + m.name + '<span class="match-score">契合 ' + m.score.toFixed(1) + '</span></h2>';
+  // 分享卡按钮（各测试通用）
+  const shareHtml = (m && m.quote)
+    ? '<div class="share-wrap"><button id="shareBtn" class="primary">保存分享图</button></div>'
+    : '';
+
   const soulHtml = (data.soul || []).map((p) => '<p>' + p + '</p>').join('');
 
   const rankLabel = ['最契合', '其次', '再次'];
@@ -305,17 +329,18 @@ function renderResults(data) {
     : '风格 ' + m.breakdown.style.toFixed(1);
 
   document.getElementById('resultsBody').innerHTML = '' +
+    heroHtml +
     '<p class="kicker">' + (t.resultKicker || '') + '</p>' +
     '<h1 class="type">' + data.typeLabel + '</h1>' +
     (data.topDims && data.topDims.length ? '<p class="type-sub">你最看重的是「' + data.topDims.join('」与「') + '」</p>' : '') +
     caveatHtml +
     '<div class="soul">' + soulHtml + '</div>' +
-    '<div class="radar-wrap">' + radar + '<p class="legend">实线 = 你　·　虚线 = 最契合的' + entityLabel + '</p></div>' +
+    radarHtml +
     '<div class="module-title">' + (t.familyTitle || '') + '</div>' +
     '<div class="family">' + familyHtml + '</div>' +
     '<div class="match-card">' +
       '<p class="match-kicker">最契合的' + entityLabel + '</p>' +
-      '<h2 class="match-name">' + m.name + '<span class="match-score">契合 ' + m.score.toFixed(1) + '</span></h2>' +
+      nameHtml +
       (m.meta ? '<p class="match-meta">' + m.meta + '</p>' : '') +
       '<p class="match-breakdown">' + breakdownHtml + '</p>' +
       (m.desc ? '<p class="match-intro">' + m.desc + '</p>' : '') +
@@ -325,7 +350,12 @@ function renderResults(data) {
       tipHtml +
       (m.quote ? '<blockquote class="match-quote">' + m.quote + '<cite>' + m.source + '</cite></blockquote>' : '') +
     '</div>' +
-    booksHtml;
+    booksHtml +
+    shareHtml;
+  if (m && m.quote) {
+    const sb = document.getElementById('shareBtn');
+    if (sb) sb.addEventListener('click', () => downloadShareCard(m, t));
+  }
 }
 
 // —— 历史 ——
@@ -418,6 +448,77 @@ function drawRadar(user, entity, test, size, showLabels) {
     s += '<path d="' + pathOf(entity) + '" class="writer-poly"/>';
   }
   return '<svg viewBox="0 0 ' + size + ' ' + size + '" class="radar' + (size < 360 ? ' radar-mini' : '') + '">' + s + '</svg>';
+}
+
+// 从实体名里拆出 emoji 与文字：动物/音乐带 emoji（🦊 狐狸），作家/角色不带（林黛玉）
+function splitName(name) {
+  const parts = (name || '').split(/\s+/);
+  if (parts.length > 1 && /\p{Extended_Pictographic}/u.test(parts[0])) {
+    return { emoji: parts[0], label: parts.slice(1).join(' ') };
+  }
+  return { emoji: '', label: name || '' };
+}
+
+// —— 分享卡（各测试通用：背景 + emoji + 你是X + 金句 + 落款 合成竖版 PNG）——
+function shareCard(m, t) {
+  const w = 720, h = 1080;
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  // 背景：有专属渐变（音乐）用渐变，否则用主题深色
+  const colors = (m.gradient && m.gradient.match(/#[0-9a-fA-F]{6}/g)) || ['#2a2620', '#16171a'];
+  const g = ctx.createLinearGradient(0, 0, w, h);
+  g.addColorStop(0, colors[0] || '#2a2620');
+  g.addColorStop(1, colors[1] || colors[0] || '#16171a');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+
+  const { emoji, label } = splitName(m.name);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+
+  let y = 300;
+  if (emoji) {
+    ctx.font = '180px "Segoe UI Emoji", "Noto Color Emoji", serif';
+    ctx.fillText(emoji, w / 2, y + 60);
+    y += 180;
+  }
+
+  ctx.font = '34px Georgia, "Noto Serif SC", serif';
+  ctx.fillStyle = 'rgba(255,255,255,.82)';
+  ctx.fillText((t && t.entityLabel === '作家') ? '你 像' : '你 是', w / 2, y + 50);
+
+  ctx.font = 'bold 72px Georgia, "Noto Serif SC", serif';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(label, w / 2, y + 150);
+
+  // 金句：按宽度简单换行
+  ctx.font = '38px Georgia, "Noto Serif SC", serif';
+  ctx.fillStyle = 'rgba(255,255,255,.95)';
+  const quote = (m.quote || '').replace(/[，。；！？,.!?]/g, '').slice(0, 24);
+  const perLine = 9, lines = [];
+  for (let i = 0; i < quote.length; i += perLine) lines.push(quote.slice(i, i + perLine));
+  lines.forEach((ln, i) => ctx.fillText(ln, w / 2, y + 290 + i * 66));
+
+  // 落款：source（英文名 / 物种 / 出处）优先，否则用测试标题
+  ctx.font = '26px Georgia, "Noto Serif SC", serif';
+  ctx.fillStyle = 'rgba(255,255,255,.62)';
+  ctx.fillText(m.source || t.title || '', w / 2, h - 96);
+
+  return canvas;
+}
+
+function downloadShareCard(m, t) {
+  const canvas = shareCard(m, t);
+  canvas.toBlob((blob) => {
+    if (!blob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = ((m.name && m.name.replace(/^\S+\s*/, '')) || 'result') + '.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  });
 }
 
 init();

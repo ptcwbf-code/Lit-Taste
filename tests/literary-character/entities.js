@@ -76,7 +76,7 @@ module.exports = [
   // —— 西方现代及其他（12）——
   { name: '默尔索', works: '《局外人》', action: 3, emotion: 2, inner: 8, dream: 4, care: 3, thought: 8, order: 4, wit: 5, desire: 4, tough: 6, tags: '疏离、诚实、无意义、冷漠' },
   { name: '格里高尔·萨姆沙', works: '《变形记》', action: 5, emotion: 5, inner: 8, dream: 4, care: 8, thought: 5, order: 8, wit: 3, desire: 2, tough: 3, tags: '尽责、异化、牺牲、变形' },
-  { name: '爱德蒙·唐泰斯', works: '《基督山伯爵》', action: 7, emotion: 6, inner: 8, dream: 5, care: 4, thought: 7, order: 6, wit: 4, desire: 8, tough: 9, tags: '复仇、隐忍、翻盘、财富' },
+  { name: '爱德蒙·唐泰斯', works: '《基督山伯爵》', action: 7, emotion: 6, inner: 9, dream: 5, care: 4, thought: 7, order: 6, wit: 4, desire: 8, tough: 9, tags: '复仇、隐忍、翻盘、财富' },
   { name: '福尔摩斯', works: '《福尔摩斯探案集》', action: 7, emotion: 3, inner: 8, dream: 5, care: 3, thought: 10, order: 7, wit: 7, desire: 4, tough: 6, tags: '理性、古怪、天才、推理' },
   { name: '加西莫多', works: '《巴黎圣母院》', action: 5, emotion: 9, inner: 6, dream: 4, care: 9, thought: 4, order: 5, wit: 2, desire: 3, tough: 8, tags: '貌丑、心纯、守护、钟楼' },
   { name: '爱丽丝', works: '《爱丽丝梦游仙境》', action: 8, emotion: 8, inner: 4, dream: 9, care: 6, thought: 6, order: 3, wit: 7, desire: 5, tough: 6, tags: '好奇、勇敢、不合逻辑、梦' },
