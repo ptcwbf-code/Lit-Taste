@@ -354,7 +354,7 @@ function renderResults(data) {
     shareHtml;
   if (m && m.quote) {
     const sb = document.getElementById('shareBtn');
-    if (sb) sb.addEventListener('click', () => downloadShareCard(m, t));
+    if (sb) sb.addEventListener('click', () => downloadShareCard(data));
   }
 }
 
@@ -459,65 +459,139 @@ function splitName(name) {
   return { emoji: '', label: name || '' };
 }
 
-// —— 分享卡（各测试通用：背景 + emoji + 你是X + 金句 + 落款 合成竖版 PNG）——
-function shareCard(m, t) {
-  const w = 720, h = 1080;
+// 文本按宽度换行，返回行数组
+function wrapLines(ctx, text, maxWidth) {
+  const lines = [];
+  let line = '';
+  for (const ch of (text || '').split('')) {
+    if (line && ctx.measureText(line + ch).width > maxWidth) { lines.push(line); line = ch; }
+    else line += ch;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+// 圆角矩形（兼容旧浏览器，不用 ctx.roundRect）
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// 加载二维码（前端静态文件 /qr.png，后端 serve 整个 frontend/）
+function loadQr() {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = '/qr.png';
+  });
+}
+
+// —— 分享卡（竖版 720×1280：背景 + emoji + 你是X + 气质标签 + 文学解读 + 金句 + 共振 + 二维码 + 落款）——
+async function shareCard(data) {
+  const m = data.match, t = data.test;
+  const qr = await loadQr();
+  const w = 720, h = 1280;
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
 
   // 背景：有专属渐变（音乐）用渐变，否则用主题深色
-  const colors = (m.gradient && m.gradient.match(/#[0-9a-fA-F]{6}/g)) || ['#2a2620', '#16171a'];
+  const colors = (m.gradient && m.gradient.match(/#[0-9a-fA-F]{6}/g)) || ['#23201a', '#12110e'];
   const g = ctx.createLinearGradient(0, 0, w, h);
-  g.addColorStop(0, colors[0] || '#2a2620');
-  g.addColorStop(1, colors[1] || colors[0] || '#16171a');
+  g.addColorStop(0, colors[0] || '#23201a');
+  g.addColorStop(1, colors[1] || colors[0] || '#12110e');
   ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
 
-  const { emoji, label } = splitName(m.name);
+  const serif = 'Georgia, "Noto Serif SC", "Songti SC", serif';
+  const mono = 'Consolas, "SFMono-Regular", monospace';
   ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
 
-  let y = 300;
+  // 顶部金线
+  ctx.fillStyle = 'rgba(232,187,99,.85)';
+  ctx.fillRect(w / 2 - 44, 56, 88, 3);
+
+  const { emoji, label } = splitName(m.name);
+  let y = 130;
+
   if (emoji) {
-    ctx.font = '180px "Segoe UI Emoji", "Noto Color Emoji", serif';
-    ctx.fillText(emoji, w / 2, y + 60);
-    y += 180;
+    ctx.font = '132px "Segoe UI Emoji", "Noto Color Emoji", serif';
+    ctx.fillText(emoji, w / 2, y + 100);
+    y += 172;
   }
 
-  ctx.font = '34px Georgia, "Noto Serif SC", serif';
-  ctx.fillStyle = 'rgba(255,255,255,.82)';
-  ctx.fillText((t && t.entityLabel === '作家') ? '你 像' : '你 是', w / 2, y + 50);
+  ctx.font = '26px ' + mono; ctx.fillStyle = 'rgba(255,255,255,.72)';
+  ctx.fillText((t && t.entityLabel === '作家') ? '你 像' : '你 是', w / 2, y + 22);
+  y += 42;
 
-  ctx.font = 'bold 72px Georgia, "Noto Serif SC", serif';
+  ctx.font = 'bold 62px ' + serif; ctx.fillStyle = '#ffffff';
+  ctx.fillText(label, w / 2, y + 46);
+  y += 80;
+
+  // 气质标签（你最看重的两个维度）
+  if (data.typeLabel) {
+    ctx.font = '22px ' + mono; ctx.fillStyle = 'rgba(232,187,99,.92)';
+    ctx.fillText(data.typeLabel, w / 2, y + 16);
+    y += 44;
+  }
+
+  // 分隔线
+  ctx.fillStyle = 'rgba(255,255,255,.22)';
+  ctx.fillRect(w / 2 - 130, y, 260, 1);
+  y += 40;
+
+  // 文学解读（「你是X……」正文）
+  ctx.font = '29px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.93)';
+  for (const ln of wrapLines(ctx, m.desc || '', 580)) { ctx.fillText(ln, w / 2, y + 18); y += 44; }
+  y += 30;
+
+  // 金句（金色高亮）
+  ctx.font = 'italic 34px ' + serif; ctx.fillStyle = '#e8bb63';
+  const quote = '“' + (m.quote || '').replace(/[，。；！？,.!?]$/, '') + '”';
+  for (const ln of wrapLines(ctx, quote, 540)) { ctx.fillText(ln, w / 2, y + 18); y += 50; }
+  y += 26;
+
+  // 共振（分析第一句：你们在哪些维度同频）
+  const reso = (m.analysis && m.analysis[0]) || '';
+  if (reso) {
+    ctx.font = '22px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.62)';
+    for (const ln of wrapLines(ctx, reso, 560)) { ctx.fillText(ln, w / 2, y + 16); y += 34; }
+    y += 20;
+  }
+
+  // 二维码（白底保证可扫）
+  const qrBox = 212, qrPad = 26;
+  const qx = w / 2 - qrBox / 2, qy = Math.max(y + 20, 978);
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(label, w / 2, y + 150);
+  roundRect(ctx, qx, qy, qrBox, qrBox, 18); ctx.fill();
+  if (qr) ctx.drawImage(qr, qx + qrPad, qy + qrPad, qrBox - qrPad * 2, qrBox - qrPad * 2);
+  ctx.font = '22px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.78)';
+  ctx.fillText('扫码来测，看看你是哪一种', w / 2, qy + qrBox + 36);
 
-  // 金句：按宽度简单换行
-  ctx.font = '38px Georgia, "Noto Serif SC", serif';
-  ctx.fillStyle = 'rgba(255,255,255,.95)';
-  const quote = (m.quote || '').replace(/[，。；！？,.!?]/g, '').slice(0, 24);
-  const perLine = 9, lines = [];
-  for (let i = 0; i < quote.length; i += perLine) lines.push(quote.slice(i, i + perLine));
-  lines.forEach((ln, i) => ctx.fillText(ln, w / 2, y + 290 + i * 66));
-
-  // 落款：source（英文名 / 物种 / 出处）优先，否则用测试标题
-  ctx.font = '26px Georgia, "Noto Serif SC", serif';
-  ctx.fillStyle = 'rgba(255,255,255,.62)';
-  ctx.fillText(m.source || t.title || '', w / 2, h - 96);
+  // 底部落款：品牌 + 来源
+  ctx.font = '19px ' + mono; ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.fillText((t.wordmark || t.title || '') + (m.source ? ' · ' + m.source : ''), w / 2, h - 50);
 
   return canvas;
 }
 
-function downloadShareCard(m, t) {
-  const canvas = shareCard(m, t);
-  canvas.toBlob((blob) => {
-    if (!blob) return;
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = ((m.name && m.name.replace(/^\S+\s*/, '')) || 'result') + '.png';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
+function downloadShareCard(data) {
+  shareCard(data).then((canvas) => {
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (splitName(data.match && data.match.name).label || 'result') + '.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+    });
   });
 }
 
