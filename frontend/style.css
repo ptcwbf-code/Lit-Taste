@@ -315,20 +315,24 @@ button.ghost:hover { border-color: var(--gold); background: var(--gold-soft); }
 /* 目录 / 首页 */
 .home-link { margin: 0; }
 .home-link.hidden { display: none; }
-.catalog { display: flex; flex-direction: column; gap: 14px; }
+.catalog { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .catalog-card {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
-  padding: 22px 24px; cursor: pointer; transition: all .15s ease;
+  display: flex; align-items: center; gap: 18px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 22px 22px; cursor: pointer; transition: all .15s ease;
 }
-.catalog-card:hover { border-color: var(--gold); background: var(--surface-2); }
-.catalog-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.catalog-card:hover { border-color: var(--gold); background: var(--surface-2); transform: translateY(-1px); }
+.catalog-emoji { font-size: 42px; line-height: 1; flex: none; }
+.catalog-info { flex: 1; min-width: 0; }
+.catalog-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
 .catalog-badge {
   font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
   color: var(--gold); border: 1px solid var(--gold); border-radius: 2px; padding: 2px 8px;
 }
-.catalog-count { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--ink-faint); }
-.catalog-title { font-size: 21px; font-weight: 500; margin: 0 0 6px; }
-.catalog-lead { margin: 0; color: var(--ink-dim); font-size: 14.5px; }
+.catalog-count { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--ink-faint); white-space: nowrap; }
+.catalog-title { font-size: 19px; font-weight: 500; margin: 0 0 5px; }
+.catalog-lead { margin: 0; color: var(--ink-dim); font-size: 13.5px; line-height: 1.6; }
+@media (max-width: 560px) { .catalog { grid-template-columns: 1fr; } }
 
 
 @media (prefers-reduced-motion: reduce) {

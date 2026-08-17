@@ -22,6 +22,7 @@ module.exports = {
   title: '阅读口味 · 文学契合测试',
   wordmark: '阅读口味 · Reading Profile',
   metaBadge: '十维测量',
+  emoji: '📖',
   heading: '找到与你最契合的作家',
   lead: '你将面对几个不同的文学情境，做出你的选择。没有对错，只有偏好。',
   modes: [

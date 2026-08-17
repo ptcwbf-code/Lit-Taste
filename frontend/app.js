@@ -59,12 +59,15 @@ function renderCatalog(list) {
   }
   document.getElementById('catalogBody').innerHTML = list.map((t) =>
     '<div class="catalog-card" data-id="' + t.id + '">' +
-      '<div class="catalog-card-head">' +
-        '<span class="catalog-badge">' + (t.metaBadge || '测试') + '</span>' +
-        '<span class="catalog-count">' + t.questionCount + ' 题 · ' + t.entityCount + ' 个候选</span>' +
+      '<div class="catalog-emoji">' + (t.emoji || '🎯') + '</div>' +
+      '<div class="catalog-info">' +
+        '<div class="catalog-top">' +
+          '<span class="catalog-badge">' + (t.metaBadge || '测试') + '</span>' +
+          '<span class="catalog-count">' + t.questionCount + ' 题 · ' + t.entityCount + ' 个候选</span>' +
+        '</div>' +
+        '<h2 class="catalog-title">' + t.heading + '</h2>' +
+        '<p class="catalog-lead">' + t.lead + '</p>' +
       '</div>' +
-      '<h2 class="catalog-title">' + t.heading + '</h2>' +
-      '<p class="catalog-lead">' + t.lead + '</p>' +
     '</div>'
   ).join('');
   document.querySelectorAll('.catalog-card').forEach((c) => c.addEventListener('click', () => openTest(c.dataset.id)));
@@ -471,6 +474,17 @@ function wrapLines(ctx, text, maxWidth) {
   return lines;
 }
 
+// 文本按宽度换行并截断到最多 N 行，末行加省略号
+function truncateLines(ctx, text, maxWidth, maxLines) {
+  const lines = wrapLines(ctx, text, maxWidth);
+  if (lines.length <= maxLines) return lines;
+  const out = lines.slice(0, maxLines);
+  let last = out[maxLines - 1];
+  while (last && ctx.measureText(last + '…').width > maxWidth) last = last.slice(0, -1);
+  out[maxLines - 1] = last + '…';
+  return out;
+}
+
 // 圆角矩形（兼容旧浏览器，不用 ctx.roundRect）
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -517,27 +531,27 @@ async function shareCard(data) {
   ctx.fillRect(w / 2 - 44, 56, 88, 3);
 
   const { emoji, label } = splitName(m.name);
-  let y = 130;
+  let y = 122;
 
   if (emoji) {
-    ctx.font = '132px "Segoe UI Emoji", "Noto Color Emoji", serif';
-    ctx.fillText(emoji, w / 2, y + 100);
-    y += 172;
+    ctx.font = '128px "Segoe UI Emoji", "Noto Color Emoji", serif';
+    ctx.fillText(emoji, w / 2, y + 98);
+    y += 164;
   }
 
-  ctx.font = '26px ' + mono; ctx.fillStyle = 'rgba(255,255,255,.72)';
-  ctx.fillText((t && t.entityLabel === '作家') ? '你 像' : '你 是', w / 2, y + 22);
-  y += 42;
+  ctx.font = '25px ' + mono; ctx.fillStyle = 'rgba(255,255,255,.72)';
+  ctx.fillText((t && t.entityLabel === '作家') ? '你 像' : '你 是', w / 2, y + 20);
+  y += 40;
 
-  ctx.font = 'bold 62px ' + serif; ctx.fillStyle = '#ffffff';
-  ctx.fillText(label, w / 2, y + 46);
-  y += 80;
+  ctx.font = 'bold 60px ' + serif; ctx.fillStyle = '#ffffff';
+  ctx.fillText(label, w / 2, y + 44);
+  y += 74;
 
   // 气质标签（你最看重的两个维度）
   if (data.typeLabel) {
-    ctx.font = '22px ' + mono; ctx.fillStyle = 'rgba(232,187,99,.92)';
-    ctx.fillText(data.typeLabel, w / 2, y + 16);
-    y += 44;
+    ctx.font = '21px ' + mono; ctx.fillStyle = 'rgba(232,187,99,.92)';
+    ctx.fillText(data.typeLabel, w / 2, y + 14);
+    y += 40;
   }
 
   // 分隔线
@@ -545,37 +559,37 @@ async function shareCard(data) {
   ctx.fillRect(w / 2 - 130, y, 260, 1);
   y += 40;
 
-  // 文学解读（「你是X……」正文）
-  ctx.font = '29px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.93)';
-  for (const ln of wrapLines(ctx, m.desc || '', 580)) { ctx.fillText(ln, w / 2, y + 18); y += 44; }
-  y += 30;
+  // 文学解读（最多 3 行，超出省略）
+  ctx.font = '28px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.93)';
+  for (const ln of truncateLines(ctx, m.desc || '', 580, 3)) { ctx.fillText(ln, w / 2, y + 16); y += 42; }
+  y += 28;
 
-  // 金句（金色高亮）
-  ctx.font = 'italic 34px ' + serif; ctx.fillStyle = '#e8bb63';
+  // 金句（最多 2 行）
+  ctx.font = 'italic 32px ' + serif; ctx.fillStyle = '#e8bb63';
   const quote = '“' + (m.quote || '').replace(/[，。；！？,.!?]$/, '') + '”';
-  for (const ln of wrapLines(ctx, quote, 540)) { ctx.fillText(ln, w / 2, y + 18); y += 50; }
-  y += 26;
+  for (const ln of truncateLines(ctx, quote, 540, 2)) { ctx.fillText(ln, w / 2, y + 16); y += 48; }
+  y += 24;
 
-  // 共振（分析第一句：你们在哪些维度同频）
+  // 共振（分析第一句：你们在哪些维度同频，最多 1 行）
   const reso = (m.analysis && m.analysis[0]) || '';
   if (reso) {
-    ctx.font = '22px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.62)';
-    for (const ln of wrapLines(ctx, reso, 560)) { ctx.fillText(ln, w / 2, y + 16); y += 34; }
-    y += 20;
+    ctx.font = '22px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.6)';
+    for (const ln of truncateLines(ctx, reso, 560, 1)) { ctx.fillText(ln, w / 2, y + 14); y += 32; }
+    y += 18;
   }
 
-  // 二维码（白底保证可扫）
-  const qrBox = 212, qrPad = 26;
-  const qx = w / 2 - qrBox / 2, qy = Math.max(y + 20, 978);
+  // 二维码（缩小、白底保证可扫）
+  const qrBox = 150, qrPad = 18;
+  const qx = w / 2 - qrBox / 2, qy = Math.max(y + 20, 900);
   ctx.fillStyle = '#ffffff';
-  roundRect(ctx, qx, qy, qrBox, qrBox, 18); ctx.fill();
+  roundRect(ctx, qx, qy, qrBox, qrBox, 16); ctx.fill();
   if (qr) ctx.drawImage(qr, qx + qrPad, qy + qrPad, qrBox - qrPad * 2, qrBox - qrPad * 2);
-  ctx.font = '22px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.78)';
-  ctx.fillText('扫码来测，看看你是哪一种', w / 2, qy + qrBox + 36);
+  ctx.font = '21px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.76)';
+  ctx.fillText('扫码来测，看看你是哪一种', w / 2, qy + qrBox + 32);
 
   // 底部落款：品牌 + 来源
-  ctx.font = '19px ' + mono; ctx.fillStyle = 'rgba(255,255,255,.5)';
-  ctx.fillText((t.wordmark || t.title || '') + (m.source ? ' · ' + m.source : ''), w / 2, h - 50);
+  ctx.font = '18px ' + mono; ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.fillText((t.wordmark || t.title || '') + (m.source ? ' · ' + m.source : ''), w / 2, h - 46);
 
   return canvas;
 }

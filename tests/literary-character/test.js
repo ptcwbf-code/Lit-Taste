@@ -22,6 +22,7 @@ module.exports = {
   title: '文学角色 · 你是谁',
   wordmark: '文学角色 · Character Profile',
   metaBadge: '十维人格',
+  emoji: '🎭',
   heading: '你更像哪个文学角色',
   lead: '几个情境，凭直觉选。没有对错，只有你更像谁。',
   modes: [

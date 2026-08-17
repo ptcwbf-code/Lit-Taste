@@ -129,7 +129,7 @@ function publicTest(t) {
 function catalogItem(t) {
   return {
     id: t.id, title: t.title, heading: t.heading, lead: t.lead,
-    metaBadge: t.metaBadge, questionCount: t.questions.length, entityCount: t.entities.length,
+    metaBadge: t.metaBadge, emoji: t.emoji, questionCount: t.questions.length, entityCount: t.entities.length,
   };
 }
 

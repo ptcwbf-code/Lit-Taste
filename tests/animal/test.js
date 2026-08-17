@@ -24,6 +24,7 @@ module.exports = {
   title: '最契合的动物 · 你是谁',
   wordmark: '最契合的动物 · Spirit Animal',
   metaBadge: '生态十维',
+  emoji: '🐾',
   heading: '你的性格，最像哪种动物',
   lead: '几个情境，凭直觉选。没有对错，只有你更像谁。',
   modes: [
