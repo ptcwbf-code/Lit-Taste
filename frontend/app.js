@@ -474,17 +474,6 @@ function wrapLines(ctx, text, maxWidth) {
   return lines;
 }
 
-// 文本按宽度换行并截断到最多 N 行，末行加省略号
-function truncateLines(ctx, text, maxWidth, maxLines) {
-  const lines = wrapLines(ctx, text, maxWidth);
-  if (lines.length <= maxLines) return lines;
-  const out = lines.slice(0, maxLines);
-  let last = out[maxLines - 1];
-  while (last && ctx.measureText(last + '…').width > maxWidth) last = last.slice(0, -1);
-  out[maxLines - 1] = last + '…';
-  return out;
-}
-
 // 圆角矩形（兼容旧浏览器，不用 ctx.roundRect）
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -506,11 +495,37 @@ function loadQr() {
   });
 }
 
-// —— 分享卡（竖版 720×1280：背景 + emoji + 你是X + 气质标签 + 文学解读 + 金句 + 共振 + 二维码 + 落款）——
+// —— 分享卡（竖版，高度随内容自适应：背景 + emoji + 你是X + 气质标签 + 文学解读 + 金句 + 共振 + 二维码 + 落款）——
 async function shareCard(data) {
   const m = data.match, t = data.test;
   const qr = await loadQr();
-  const w = 720, h = 1280;
+  const w = 720;
+  const serif = 'Georgia, "Noto Serif SC", "Songti SC", serif';
+  const mono = 'Consolas, "SFMono-Regular", monospace';
+
+  // 先测量完整文本（不截断），算出每段行数，进而算总高度
+  const mc = document.createElement('canvas').getContext('2d');
+  const measure = (text, font, maxW) => { mc.font = font; return wrapLines(mc, text, maxW); };
+  const { emoji, label } = splitName(m.name);
+  const descLines = measure(m.desc || '', '28px ' + serif, 580);
+  const quoteText = '“' + (m.quote || '').replace(/[，。；！？,.!?]$/, '') + '”';
+  const quoteLines = measure(quoteText, 'italic 32px ' + serif, 540);
+  const resoText = (m.analysis && m.analysis[0]) || '';
+  const resoLines = resoText ? measure(resoText, '22px ' + serif, 560) : [];
+
+  let h = 108;
+  if (emoji) h += 168;
+  h += 40 + 74;                  // 你是 + 名字
+  if (data.typeLabel) h += 40;   // 气质标签
+  h += 40;                       // 分隔线
+  h += descLines.length * 42;    // 文学解读（完整）
+  h += 28;                       // 间距
+  h += quoteLines.length * 48;   // 金句（完整）
+  h += 24;                       // 间距
+  if (resoLines.length) h += resoLines.length * 32 + 18; // 共振
+  h += 24 + 150 + 34 + 90;       // 间距 + 二维码 + 提示 + 底部留白
+  h = Math.max(h, 860);
+
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
@@ -522,65 +537,53 @@ async function shareCard(data) {
   g.addColorStop(1, colors[1] || colors[0] || '#12110e');
   ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
 
-  const serif = 'Georgia, "Noto Serif SC", "Songti SC", serif';
-  const mono = 'Consolas, "SFMono-Regular", monospace';
   ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
 
   // 顶部金线
   ctx.fillStyle = 'rgba(232,187,99,.85)';
-  ctx.fillRect(w / 2 - 44, 56, 88, 3);
+  ctx.fillRect(w / 2 - 44, 52, 88, 3);
 
-  const { emoji, label } = splitName(m.name);
-  let y = 122;
-
+  let y = 108;
   if (emoji) {
     ctx.font = '128px "Segoe UI Emoji", "Noto Color Emoji", serif';
     ctx.fillText(emoji, w / 2, y + 98);
-    y += 164;
+    y += 168;
   }
 
   ctx.font = '25px ' + mono; ctx.fillStyle = 'rgba(255,255,255,.72)';
-  ctx.fillText((t && t.entityLabel === '作家') ? '你 像' : '你 是', w / 2, y + 20);
-  y += 40;
+  ctx.fillText((t && t.entityLabel === '作家') ? '你 像' : '你 是', w / 2, y + 20); y += 40;
 
   ctx.font = 'bold 60px ' + serif; ctx.fillStyle = '#ffffff';
-  ctx.fillText(label, w / 2, y + 44);
-  y += 74;
+  ctx.fillText(label, w / 2, y + 44); y += 74;
 
-  // 气质标签（你最看重的两个维度）
   if (data.typeLabel) {
     ctx.font = '21px ' + mono; ctx.fillStyle = 'rgba(232,187,99,.92)';
-    ctx.fillText(data.typeLabel, w / 2, y + 14);
-    y += 40;
+    ctx.fillText(data.typeLabel, w / 2, y + 14); y += 40;
   }
 
-  // 分隔线
   ctx.fillStyle = 'rgba(255,255,255,.22)';
-  ctx.fillRect(w / 2 - 130, y, 260, 1);
-  y += 40;
+  ctx.fillRect(w / 2 - 130, y, 260, 1); y += 40;
 
-  // 文学解读（最多 3 行，超出省略）
+  // 文学解读（完整，不截断）
   ctx.font = '28px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.93)';
-  for (const ln of truncateLines(ctx, m.desc || '', 580, 3)) { ctx.fillText(ln, w / 2, y + 16); y += 42; }
+  for (const ln of descLines) { ctx.fillText(ln, w / 2, y + 16); y += 42; }
   y += 28;
 
-  // 金句（最多 2 行）
+  // 金句（完整）
   ctx.font = 'italic 32px ' + serif; ctx.fillStyle = '#e8bb63';
-  const quote = '“' + (m.quote || '').replace(/[，。；！？,.!?]$/, '') + '”';
-  for (const ln of truncateLines(ctx, quote, 540, 2)) { ctx.fillText(ln, w / 2, y + 16); y += 48; }
+  for (const ln of quoteLines) { ctx.fillText(ln, w / 2, y + 16); y += 48; }
   y += 24;
 
-  // 共振（分析第一句：你们在哪些维度同频，最多 1 行）
-  const reso = (m.analysis && m.analysis[0]) || '';
-  if (reso) {
+  // 共振（完整）
+  if (resoLines.length) {
     ctx.font = '22px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.6)';
-    for (const ln of truncateLines(ctx, reso, 560, 1)) { ctx.fillText(ln, w / 2, y + 14); y += 32; }
+    for (const ln of resoLines) { ctx.fillText(ln, w / 2, y + 14); y += 32; }
     y += 18;
   }
 
-  // 二维码（缩小、白底保证可扫）
+  // 二维码（白底保证可扫）
   const qrBox = 150, qrPad = 18;
-  const qx = w / 2 - qrBox / 2, qy = Math.max(y + 20, 900);
+  const qx = w / 2 - qrBox / 2, qy = y + 24;
   ctx.fillStyle = '#ffffff';
   roundRect(ctx, qx, qy, qrBox, qrBox, 16); ctx.fill();
   if (qr) ctx.drawImage(qr, qx + qrPad, qy + qrPad, qrBox - qrPad * 2, qrBox - qrPad * 2);
