@@ -29,7 +29,7 @@ module.exports = [
   { id: 1, format: 'reality', context: null,
     prompt: '你深爱一个人，可所有人都认定你们不该在一起。你会？',
     options: [
-      { id: 'A', text: '不管别人怎么看，先在一起再说。', vector: { action: 3 } },
+      { id: 'A', text: '不管别人怎么看，先在一起再说。', vector: { action: 3, desire: 1 } },
       { id: 'B', text: '反复想：我们真的能走到最后吗。', vector: { inner: 3 } },
       { id: 'C', text: '问自己：我爱的到底是这个人，还是"偏要"的那股劲。', vector: { thought: 3 } },
       { id: 'D', text: '算了，也许他们说得有道理。', vector: {}, avoid: true },
@@ -123,7 +123,7 @@ module.exports = [
     options: [
       { id: 'A', text: '预知未来，提前知道答案。', vector: { thought: 2, order: 1 } },
       { id: 'B', text: '读心，看透别人真实的想法。', vector: { inner: 3 } },
-      { id: 'C', text: '飞天入地、力大无穷，去改变世界。', vector: { action: 2, care: 1 } },
+      { id: 'C', text: '飞天入地、力大无穷，去改变世界。', vector: { action: 2, care: 1, dream: 1 } },
       { id: 'D', text: '隐身，躲在人群里看热闹。', vector: { wit: 2 } },
     ] },
   { id: 12, format: 'fantasy', context: null,

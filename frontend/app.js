@@ -280,7 +280,7 @@ function renderResults(data) {
   const heroHtml = (m && m.gradient)
     ? '<div class="hero" style="background:' + m.gradient + '">' +
         (heroSp.emoji ? '<div class="hero-emoji">' + heroSp.emoji + '</div>' : '') +
-        '<div class="hero-label">你是</div>' +
+        '<div class="hero-label">' + (t.heroKicker || '你是') + '</div>' +
         '<div class="hero-name">' + heroSp.label + '</div>' +
         '<div class="hero-score">契合 ' + m.score.toFixed(1) + '</div>' +
       '</div>'
@@ -495,8 +495,13 @@ function loadQr() {
   });
 }
 
+// —— 分享卡：按测试类型分发（postcard 明信片 / 通用渐变卡）——
+function shareCard(data) {
+  return (data.test && data.test.postcard) ? postcardCard(data) : shareCardGeneric(data);
+}
+
 // —— 分享卡（竖版，高度随内容自适应：背景 + emoji + 你是X + 气质标签 + 文学解读 + 金句 + 共振 + 二维码 + 落款）——
-async function shareCard(data) {
+async function shareCardGeneric(data) {
   const m = data.match, t = data.test;
   const qr = await loadQr();
   const w = 720;
@@ -550,8 +555,11 @@ async function shareCard(data) {
     y += 168;
   }
 
+  // "你像 / 你是 / 你属于" 由测试元信息决定（作家=你像，时代等带 heroKicker 用你属于，其余你是）
+  const kicker = (t && t.entityLabel === '作家') ? '你 像'
+    : (t && t.heroKicker) ? Array.from(t.heroKicker).join(' ') : '你 是';
   ctx.font = '25px ' + mono; ctx.fillStyle = 'rgba(255,255,255,.72)';
-  ctx.fillText((t && t.entityLabel === '作家') ? '你 像' : '你 是', w / 2, y + 20); y += 40;
+  ctx.fillText(kicker, w / 2, y + 20); y += 40;
 
   ctx.font = 'bold 60px ' + serif; ctx.fillStyle = '#ffffff';
   ctx.fillText(label, w / 2, y + 44); y += 74;
@@ -593,6 +601,147 @@ async function shareCard(data) {
   // 底部落款：品牌 + 来源
   ctx.font = '18px ' + mono; ctx.fillStyle = 'rgba(255,255,255,.5)';
   ctx.fillText((t.wordmark || t.title || '') + (m.source ? ' · ' + m.source : ''), w / 2, h - 46);
+
+  return canvas;
+}
+
+// 纸纹噪点：一张小尺寸随机颗粒图，缩放铺满后形成羊皮纸 / 老照片颗粒感
+function makeNoise(w, h) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const cx = c.getContext('2d');
+  const img = cx.createImageData(w, h);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = Math.floor(Math.random() * 255);
+    img.data[i] = v; img.data[i + 1] = v; img.data[i + 2] = v; img.data[i + 3] = 255;
+  }
+  cx.putImageData(img, 0, 0);
+  return c;
+}
+
+// 时代印章：圆形印戳（时代字 + 双细环，朱红），像盖在明信片上的戳记
+function drawSeal(ctx, cx, cy, r, text, serif) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-Math.PI / 30);
+  ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(178,48,40,.92)';
+  ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(178,48,40,.7)';
+  ctx.beginPath(); ctx.arc(0, 0, r - 11, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = 'rgba(178,48,40,.95)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const chars = Array.from(text || '');
+  if (chars.length >= 4) {
+    // 2×2 竖排，像篆刻印文
+    ctx.font = 'bold 26px ' + serif;
+    ctx.fillText(chars[0], -14, -14);
+    ctx.fillText(chars[1], 14, -14);
+    ctx.fillText(chars[2], -14, 14);
+    ctx.fillText(chars[3], 14, 14);
+  } else {
+    ctx.font = 'bold 28px ' + serif;
+    ctx.fillText(text || '', 0, 3);
+  }
+  ctx.restore();
+}
+
+// —— 复古时代明信片分享卡（时代包专属，P0）：时代渐变 + 纸纹 + 双线边框 + 大 emoji/时代名 + 金句 + 年代落款 + 印章 ——
+async function postcardCard(data) {
+  const m = data.match, t = data.test;
+  const qr = await loadQr();
+  const w = 720;
+  const serif = 'Georgia, "Noto Serif SC", "Songti SC", serif';
+  const mono = 'Consolas, "SFMono-Regular", monospace';
+
+  // 先测量完整文本，算出每段行数，进而算总高度
+  const mc = document.createElement('canvas').getContext('2d');
+  const measure = (text, font, maxW) => { mc.font = font; return wrapLines(mc, text, maxW); };
+  const { emoji, label } = splitName(m.name);
+  const quoteText = '“' + (m.quote || '').replace(/[，。；！？,.!?]$/, '') + '”';
+  const quoteLines = measure(quoteText, 'italic 40px ' + serif, 540);
+  const descLines = measure(m.desc || '', '26px ' + serif, 600);
+
+  const h = Math.max(1110,
+    150 + (emoji ? 140 : 0) + 46 + 100 + 30 +
+    quoteLines.length * 54 + 22 + 44 +
+    descLines.length * 40 + 40 +
+    150 + 34 + 90); // 二维码 + 提示间距 + 底部"年代·地点"落款区
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  // 背景：时代专属渐变
+  const colors = (m.gradient && m.gradient.match(/#[0-9a-fA-F]{6}/g)) || ['#3a2a1a', '#120d08'];
+  const g = ctx.createLinearGradient(0, 0, w, h);
+  g.addColorStop(0, colors[0] || '#3a2a1a');
+  g.addColorStop(1, colors[1] || colors[0] || '#120d08');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+
+  // 纸纹噪点（羊皮纸 / 老照片颗粒）
+  const noise = makeNoise(180, 270);
+  ctx.save(); ctx.globalAlpha = 0.07; ctx.drawImage(noise, 0, 0, w, h); ctx.restore();
+
+  // 双线边框（明信片边）
+  ctx.strokeStyle = 'rgba(232,187,99,.8)'; ctx.lineWidth = 3;
+  ctx.strokeRect(26, 26, w - 52, h - 52);
+  ctx.strokeStyle = 'rgba(232,187,99,.3)'; ctx.lineWidth = 1;
+  ctx.strokeRect(42, 42, w - 84, h - 84);
+
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+
+  // 时代印章（右上角，像邮票的位置）
+  drawSeal(ctx, w - 118, 96, 46, m.seal || '', serif);
+
+  // 顶部金线
+  ctx.fillStyle = 'rgba(232,187,99,.85)';
+  ctx.fillRect(w / 2 - 44, 64, 88, 3);
+
+  let y = 150;
+  if (emoji) {
+    ctx.font = '120px "Segoe UI Emoji", "Noto Color Emoji", serif';
+    ctx.fillText(emoji, w / 2, y + 80);
+    y += 140;
+  }
+
+  ctx.font = '24px ' + mono; ctx.fillStyle = 'rgba(232,187,99,.92)';
+  const kicker = (t && t.heroKicker) ? Array.from(t.heroKicker).join(' ') : '你 属 于';
+  ctx.fillText(kicker, w / 2, y + 16); y += 46;
+
+  // 时代名：衬线 + 描边（明信片上的主标题）
+  ctx.font = 'bold 64px ' + serif;
+  ctx.lineWidth = 5; ctx.lineJoin = 'round';
+  ctx.strokeStyle = 'rgba(0,0,0,.55)';
+  ctx.strokeText(label, w / 2, y + 48);
+  ctx.fillStyle = '#f5ead2';
+  ctx.fillText(label, w / 2, y + 48);
+  y += 100;
+
+  // 时代金句（中心位，金色，明信片的魂）
+  ctx.font = 'italic 40px ' + serif; ctx.fillStyle = '#e8bb63';
+  for (const ln of quoteLines) { ctx.fillText(ln, w / 2, y + 22); y += 54; }
+  y += 22;
+
+  // 分隔线
+  ctx.fillStyle = 'rgba(232,187,99,.4)';
+  ctx.fillRect(w / 2 - 120, y, 240, 1); y += 44;
+
+  // 文学解读
+  ctx.font = '26px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.93)';
+  for (const ln of descLines) { ctx.fillText(ln, w / 2, y + 16); y += 40; }
+  y += 40;
+
+  // 二维码（白底保证可扫）
+  const qrBox = 150, qrPad = 18;
+  const qx = w / 2 - qrBox / 2, qy = y;
+  ctx.fillStyle = '#ffffff';
+  roundRect(ctx, qx, qy, qrBox, qrBox, 16); ctx.fill();
+  if (qr) ctx.drawImage(qr, qx + qrPad, qy + qrPad, qrBox - qrPad * 2, qrBox - qrPad * 2);
+  ctx.font = '20px ' + serif; ctx.fillStyle = 'rgba(255,255,255,.72)';
+  ctx.fillText('扫码来测，看看你属于哪个时代', w / 2, qy + qrBox + 30);
+
+  // 年代 · 地点 落款（明信片底部的说明行，也是最后一行）
+  ctx.font = '22px ' + mono; ctx.fillStyle = 'rgba(232,187,99,.92)';
+  ctx.fillText(m.source || '', w / 2, h - 56);
 
   return canvas;
 }

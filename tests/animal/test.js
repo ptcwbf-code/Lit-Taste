@@ -44,6 +44,7 @@ module.exports = {
   legendLabel: '最契合的动物',
   metaFields: ['species'], // 实体副标题行：显示具体物种名，如「赤狐」
   foldRadar: true, // 结果页雷达图默认折叠（与音乐包一致）
+  gradient: 'linear-gradient(135deg, #4a7a3a, #142210)', // 分享卡默认主色（实体未配专属渐变时的兜底）
 
   dims: [
     { key: 'social', label: '群性', adj: '合群联结' },

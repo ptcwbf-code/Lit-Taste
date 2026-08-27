@@ -17,11 +17,11 @@ module.exports = [
   { name: '🐙 章鱼', species: '普通章鱼', social: 2, circadian: 6, territory: 4, predation: 5, vigilance: 7, display: 2, dormancy: 7, hoard: 4, curiosity: 10, combat: 4, tags: '高智、孤独、深不可测' },
   { name: '🐦 乌鸦', species: '小嘴乌鸦', social: 5, circadian: 6, territory: 5, predation: 5, vigilance: 8, display: 3, dormancy: 5, hoard: 8, curiosity: 8, combat: 5, tags: '机警、适应力、独立' },
   { name: '🦎 变色龙', species: '高冠变色龙', social: 2, circadian: 6, territory: 6, predation: 4, vigilance: 8, display: 2, dormancy: 8, hoard: 3, curiosity: 7, combat: 2, tags: '伪装、适应、慢观察' },
-  { name: '🐍 蛇', species: '眼镜王蛇', social: 2, circadian: 7, territory: 4, predation: 4, vigilance: 6, display: 3, dormancy: 8, hoard: 4, curiosity: 4, combat: 5, tags: '冷静、隐忍、蜕变' },
+  { name: '🐍 蛇', species: '眼镜王蛇', social: 2, circadian: 7, territory: 3, predation: 3, vigilance: 5, display: 3, dormancy: 9, hoard: 4, curiosity: 3, combat: 4, tags: '冷静、隐忍、蜕变' },
 
   // —— B. 温柔与敏感 ——
-  { name: '🦌 鹿', species: '梅花鹿', social: 5, circadian: 6, territory: 4, predation: 2, vigilance: 9, display: 4, dormancy: 6, hoard: 3, curiosity: 4, combat: 2, tags: '敏感、温顺、易惊' },
-  { name: '🐰 兔子', species: '穴兔', social: 8, circadian: 5, territory: 5, predation: 1, vigilance: 9, display: 3, dormancy: 5, hoard: 4, curiosity: 5, combat: 1, tags: '机警、温顺、合群' },
+  { name: '🦌 鹿', species: '梅花鹿', social: 4, circadian: 7, territory: 4, predation: 2, vigilance: 10, display: 3, dormancy: 7, hoard: 3, curiosity: 3, combat: 2, tags: '敏感、温顺、易惊' },
+  { name: '🐰 兔子', species: '穴兔', social: 9, circadian: 4, territory: 5, predation: 1, vigilance: 9, display: 3, dormancy: 4, hoard: 4, curiosity: 6, combat: 1, tags: '机警、温顺、合群' },
   { name: '🐎 马', species: '蒙古马', social: 7, circadian: 5, territory: 2, predation: 2, vigilance: 7, display: 5, dormancy: 4, hoard: 3, curiosity: 6, combat: 4, tags: '自由、敏感、向往远方' },
   { name: '🐘 大象', species: '亚洲象', social: 9, circadian: 5, territory: 6, predation: 2, vigilance: 5, display: 4, dormancy: 6, hoard: 5, curiosity: 6, combat: 4, tags: '温柔、重情、记性' },
   { name: '🐋 蓝鲸', species: '蓝鲸', social: 4, circadian: 6, territory: 3, predation: 3, vigilance: 5, display: 3, dormancy: 6, hoard: 4, curiosity: 6, combat: 2, tags: '温柔、庞大、孤独' },
@@ -41,7 +41,7 @@ module.exports = [
   { name: '🦋 蝴蝶', species: '帝王蝶', social: 3, circadian: 5, territory: 2, predation: 2, vigilance: 4, display: 8, dormancy: 6, hoard: 2, curiosity: 5, combat: 1, tags: '蜕变、轻盈、绚烂' },
 
   // —— E. 沉稳与蛰伏 ——
-  { name: '🐢 乌龟', species: '陆龟', social: 3, circadian: 5, territory: 8, predation: 2, vigilance: 4, display: 2, dormancy: 9, hoard: 6, curiosity: 2, combat: 3, tags: '沉稳、坚忍、慢' },
+  { name: '🐢 乌龟', species: '陆龟', social: 2, circadian: 5, territory: 9, predation: 2, vigilance: 4, display: 2, dormancy: 9, hoard: 5, curiosity: 2, combat: 2, tags: '沉稳、坚忍、慢' },
   { name: '🐻 棕熊', species: '棕熊', social: 4, circadian: 6, territory: 8, predation: 6, vigilance: 4, display: 3, dormancy: 10, hoard: 6, curiosity: 5, combat: 7, tags: '慵懒、护短、深藏不露' },
   { name: '🦔 刺猬', species: '普通刺猬', social: 4, circadian: 7, territory: 5, predation: 4, vigilance: 8, display: 2, dormancy: 8, hoard: 6, curiosity: 4, combat: 3, tags: '外冷内软、慢热、防御' },
   { name: '🐊 鳄鱼', species: '尼罗鳄', social: 2, circadian: 7, territory: 9, predation: 3, vigilance: 7, display: 3, dormancy: 8, hoard: 4, curiosity: 4, combat: 8, tags: '冷血、耐心、伏击' },
@@ -50,9 +50,9 @@ module.exports = [
   // —— F. 强悍与无畏 ——
   { name: '🐯 虎', species: '东北虎', social: 2, circadian: 6, territory: 9, predation: 9, vigilance: 6, display: 5, dormancy: 6, hoard: 4, curiosity: 5, combat: 9, tags: '孤高、强悍、王者' },
   { name: '🐺 狼', species: '灰狼', social: 8, circadian: 6, territory: 5, predation: 7, vigilance: 6, display: 4, dormancy: 4, hoard: 4, curiosity: 6, combat: 7, tags: '忠诚、野性、坚韧' },
-  { name: '🦅 鹰', species: '金雕', social: 2, circadian: 5, territory: 4, predation: 9, vigilance: 7, display: 5, dormancy: 5, hoard: 3, curiosity: 6, combat: 7, tags: '自由、远见、独行' },
-  { name: '🦈 鲨鱼', species: '大白鲨', social: 3, circadian: 6, territory: 6, predation: 10, vigilance: 7, display: 4, dormancy: 3, hoard: 2, curiosity: 6, combat: 9, tags: '专注、冷静、永不停歇' },
-  { name: '🦡 蜜獾', species: '蜜獾', social: 3, circadian: 6, territory: 8, predation: 9, vigilance: 3, display: 5, dormancy: 5, hoard: 3, curiosity: 6, combat: 10, tags: '无畏、生猛、天不怕' },
+  { name: '🦅 鹰', species: '金雕', social: 2, circadian: 4, territory: 4, predation: 9, vigilance: 7, display: 5, dormancy: 5, hoard: 3, curiosity: 7, combat: 6, tags: '自由、远见、独行' },
+  { name: '🦈 鲨鱼', species: '大白鲨', social: 3, circadian: 7, territory: 6, predation: 10, vigilance: 8, display: 4, dormancy: 2, hoard: 2, curiosity: 6, combat: 10, tags: '专注、冷静、永不停歇' },
+  { name: '🦡 蜜獾', species: '蜜獾', social: 2, circadian: 6, territory: 8, predation: 9, vigilance: 2, display: 5, dormancy: 5, hoard: 3, curiosity: 7, combat: 10, tags: '无畏、生猛、天不怕' },
   { name: '🐐 山羊', species: '阿尔卑斯羱羊', social: 4, circadian: 5, territory: 6, predation: 2, vigilance: 6, display: 4, dormancy: 5, hoard: 4, curiosity: 8, combat: 8, tags: '倔强、独立、爱攀登' },
 
   // —— G. 夜的守望 ——
@@ -60,15 +60,15 @@ module.exports = [
   { name: '🦇 蝙蝠', species: '普通蝙蝠', social: 8, circadian: 10, territory: 5, predation: 4, vigilance: 7, display: 3, dormancy: 6, hoard: 4, curiosity: 6, combat: 4, tags: '夜行、神秘、群居' },
 
   // —— H. 信任与孤独（已灭绝 🦴）——
-  { name: '🦤 渡渡鸟', species: '渡渡鸟 🦴', social: 6, circadian: 5, territory: 4, predation: 1, vigilance: 2, display: 3, dormancy: 6, hoard: 3, curiosity: 3, combat: 1, tags: '信任、温柔、真诚' },
-  { name: '🦘 袋狼', species: '塔斯马尼亚虎 🦴', social: 2, circadian: 7, territory: 5, predation: 6, vigilance: 7, display: 3, dormancy: 7, hoard: 3, curiosity: 5, combat: 5, tags: '神秘、沉默、孤独' },
+  { name: '🦤 渡渡鸟', species: '渡渡鸟 🦴', social: 7, circadian: 5, territory: 4, predation: 1, vigilance: 3, display: 4, dormancy: 6, hoard: 4, curiosity: 4, combat: 1, tags: '信任、温柔、真诚' },
+  { name: '🦘 袋狼', species: '塔斯马尼亚虎 🦴', social: 2, circadian: 7, territory: 6, predation: 7, vigilance: 8, display: 3, dormancy: 6, hoard: 3, curiosity: 6, combat: 5, tags: '神秘、沉默、孤独' },
 
   // —— I. 新加入的十二种 ——
   { name: '🐖 猪', species: '家猪', social: 5, circadian: 5, territory: 4, predation: 2, vigilance: 3, display: 2, dormancy: 8, hoard: 4, curiosity: 8, combat: 2, tags: '通透、聪明、懂享受' },
-  { name: '🐄 牛', species: '家牛', social: 5, circadian: 4, territory: 6, predation: 2, vigilance: 4, display: 2, dormancy: 8, hoard: 8, curiosity: 2, combat: 4, tags: '勤恳、耐劳、深耕' },
+  { name: '🐄 牛', species: '家牛', social: 6, circadian: 4, territory: 5, predation: 2, vigilance: 4, display: 2, dormancy: 8, hoard: 8, curiosity: 3, combat: 4, tags: '勤恳、耐劳、深耕' },
   { name: '🐒 猴子', species: '猕猴', social: 8, circadian: 5, territory: 3, predation: 4, vigilance: 5, display: 7, dormancy: 2, hoard: 3, curiosity: 9, combat: 7, tags: '机灵、顽皮、爱闹' },
   { name: '🐕 狗', species: '家犬', social: 8, circadian: 5, territory: 5, predation: 4, vigilance: 7, display: 3, dormancy: 4, hoard: 4, curiosity: 6, combat: 6, tags: '忠诚、守护、无保留' },
-  { name: '🐪 骆驼', species: '双峰驼', social: 5, circadian: 5, territory: 8, predation: 3, vigilance: 5, display: 2, dormancy: 7, hoard: 9, curiosity: 4, combat: 4, tags: '耐旱、远行、能扛' },
+  { name: '🐪 骆驼', species: '双峰驼', social: 4, circadian: 5, territory: 9, predation: 3, vigilance: 6, display: 2, dormancy: 6, hoard: 9, curiosity: 5, combat: 4, tags: '耐旱、远行、能扛' },
   { name: '🦚 孔雀', species: '蓝孔雀', social: 5, circadian: 5, territory: 7, predation: 2, vigilance: 5, display: 10, dormancy: 4, hoard: 2, curiosity: 4, combat: 3, tags: '华丽、自赏、从容' },
   { name: '🐆 猎豹', species: '猎豹', social: 2, circadian: 5, territory: 4, predation: 9, vigilance: 6, display: 7, dormancy: 4, hoard: 2, curiosity: 6, combat: 3, tags: '迅捷、优雅、不恋战' },
   { name: '🦂 蝎子', species: '黑粗尾蝎', social: 2, circadian: 6, territory: 5, predation: 5, vigilance: 8, display: 2, dormancy: 6, hoard: 3, curiosity: 4, combat: 8, tags: '低调、致命、防御' },

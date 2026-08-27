@@ -120,6 +120,8 @@ function publicTest(t) {
     familyTitle: t.familyTitle, dnaTitle: t.dnaTitle, tipLabel: t.tipLabel,
     booksTitle: t.booksTitle, legendLabel: t.legendLabel, metaFields: t.metaFields,
     foldRadar: !!t.foldRadar,
+    heroKicker: t.heroKicker || '', // 结果页 Hero 标题（如"你属于"；默认"你是"）
+    postcard: !!t.postcard, // 明信片式分享卡开关（时代包开启）
     dims: t.dims.map((d) => ({ key: d.key, label: d.label })),
     hasDifficulty: !!(t.config && t.config.difficulty),
     questionCount: t.questions.length, entityCount: t.entities.length,
@@ -239,7 +241,8 @@ app.post('/api/tests/:id/results', wrap(async (req, res) => {
     desc2: detail.works_intro || '',
     quote: detail.quote || '',
     source: detail.source || '',
-    gradient: detail.gradient || '',
+    gradient: detail.gradient || t.gradient || '', // 实体专属渐变，缺省用测试主色（时代包用专属色，其余包用主色）
+    seal: detail.seal || '', // 明信片上的时代印章文字（时代包提供）
     analysis: analysis.lines,
     sharedDna: analysis.sharedDna,
     tip: analysis.readingTip,

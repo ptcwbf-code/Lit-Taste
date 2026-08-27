@@ -61,8 +61,8 @@ module.exports = [
   { id: 5, format: 'reality', context: null,
     prompt: '深夜独自在家，突然听到门外有动静。你会——',
     options: [
-      { id: 'A', text: '立刻警觉，悄悄过去看个究竟。', vector: { vigilance: 3 } },
-      { id: 'B', text: '先反锁门、检查门窗，再确认安全。', vector: { vigilance: 2, territory: 1 } },
+      { id: 'A', text: '立刻警觉，悄悄过去看个究竟。', vector: { vigilance: 3, circadian: 1 } },
+      { id: 'B', text: '先反锁门、检查门窗，再确认安全。', vector: { vigilance: 2, territory: 1, circadian: 1 } },
       { id: 'C', text: '继续睡，多半是风吹的。', vector: {} },
       { id: 'D', text: '有点怕，叫醒同住的人一起看。', vector: { social: 1, vigilance: 1 } },
     ],
@@ -89,7 +89,7 @@ module.exports = [
     options: [
       { id: 'A', text: '好好休息，一个人待着回回血。', vector: { dormancy: 3 } },
       { id: 'B', text: '找朋友庆祝一下。', vector: { social: 2, display: 1 } },
-      { id: 'C', text: '马上投入下一件事，停不下来。', vector: { predation: 2 } },
+      { id: 'C', text: '马上投入下一件事，停不下来。', vector: { predation: 2, circadian: 1 } },
       { id: 'D', text: '复盘一遍，看看哪里还能更好。', vector: { vigilance: 1, curiosity: 1 } },
     ] },
   { id: 8, format: 'reality', context: null,
@@ -130,7 +130,7 @@ module.exports = [
     prompt: '如果能变成一种"猎手"，你更想——',
     options: [
       { id: 'A', text: '正面追赶，一击制胜。', vector: { combat: 2, predation: 2 } },
-      { id: 'B', text: '静静埋伏，等最好的时机。', vector: { vigilance: 2, dormancy: 1, predation: 1 } },
+      { id: 'B', text: '静静埋伏，等最好的时机。', vector: { vigilance: 2, dormancy: 1, predation: 1, circadian: 1 } },
       { id: 'C', text: '和同伴配合，一起围猎。', vector: { social: 2, predation: 1 } },
       { id: 'D', text: '我不想当猎手，只想安稳活着。', vector: {}, avoid: true },
     ] },
@@ -188,7 +188,7 @@ module.exports = [
     prompt: '累了一整天回到家，你更想——',
     options: [
       { id: 'A', text: '找人聊聊，说说今天。', vector: { social: 2, display: 1 } },
-      { id: 'B', text: '一个人安静待着，谁也别来。', vector: { dormancy: 2 } },
+      { id: 'B', text: '一个人安静待着，谁也别来。', vector: { dormancy: 2, circadian: 1 } },
       { id: 'C', text: '约几个朋友出来聚一聚。', vector: { social: 3 } },
       { id: 'D', text: '随便刷刷手机，放空。', vector: {}, avoid: true },
     ] },
@@ -289,7 +289,7 @@ module.exports = [
     options: [
       { id: 'A', text: '时刻留意周围的人和变化。', vector: { vigilance: 3 } },
       { id: 'B', text: '沉浸在自己的世界里。', vector: { dormancy: 2 } },
-      { id: 'C', text: '总惦记着还有什么事没做完。', vector: { hoard: 2, predation: 1 } },
+      { id: 'C', text: '总惦记着还有什么事没做完。', vector: { hoard: 2, predation: 1, circadian: 1 } },
       { id: 'D', text: '对什么都提不起精神。', vector: {}, avoid: true },
     ] },
   { id: 31, format: 'inner', context: null,
@@ -353,7 +353,7 @@ module.exports = [
   { id: 38, format: 'commitment', context: null,
     prompt: '为了一个重要目标，你愿意——',
     options: [
-      { id: 'A', text: '牺牲休息和娱乐，全力冲。', vector: { predation: 2, combat: 1 } },
+      { id: 'A', text: '牺牲休息和娱乐，全力冲。', vector: { predation: 2, combat: 1, circadian: 1 } },
       { id: 'B', text: '慢慢来，稳扎稳打地磨。', vector: { dormancy: 2, territory: 1 } },
       { id: 'C', text: '先囤足资源，再动手。', vector: { hoard: 3 } },
       { id: 'D', text: '走一步看一步。', vector: {}, avoid: true },

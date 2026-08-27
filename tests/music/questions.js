@@ -51,7 +51,7 @@ module.exports = [
   { id: 4, format: 'glow', context: null,
     prompt: '黄昏的风带着一点凉意，吹过你的脸。',
     options: [
-      { id: 'A', text: '你深吸一口，觉得这凉意让人清醒。', vector: { space: 2, inward: 1 } },
+      { id: 'A', text: '你深吸一口，觉得这凉意让人清醒。', vector: { space: 2, inward: 1, texture: 1 } },
       { id: 'B', text: '你想起某个有风的黄昏，和一个不在身边的人。', vector: { nostalgia: 2, melancholy: 1 } },
       { id: 'C', text: '你紧了紧外套，想快点回到暖和的地方。', vector: { warmth: 2 } },
       { id: 'D', text: '你没留意风，继续往前走。', vector: { order: 1 } },
@@ -117,7 +117,7 @@ module.exports = [
   { id: 12, format: 'night', context: null,
     prompt: '关上灯，房间沉进黑暗，只有月光漏进来一点。',
     options: [
-      { id: 'A', text: '你睁着眼，觉得黑暗是一种温柔的包裹。', vector: { inward: 2 } },
+      { id: 'A', text: '你睁着眼，觉得黑暗是一种温柔的包裹。', vector: { inward: 2, texture: 1 } },
       { id: 'B', text: '你心里翻着白天的事，一时平静不下来。', vector: { melancholy: 2, inward: 1 } },
       { id: 'C', text: '你很快就困了，黑暗让你安心。', vector: { space: 1 } },
       { id: 'D', text: '你有点怕黑，留了一盏小灯。', vector: { order: 1 } },
@@ -125,8 +125,8 @@ module.exports = [
   { id: 13, format: 'night', context: null,
     prompt: '深夜里，你翻到一叠旧照片，有些边角已经磨得泛白。',
     options: [
-      { id: 'A', text: '你喜欢那些磨旧的，它们带着被摸过的痕迹。', vector: { nostalgia: 3 } },
-      { id: 'B', text: '你喜欢那些还完好的，像时光没有磨损它们。', vector: { nostalgia: 2, order: 1 } },
+      { id: 'A', text: '你喜欢那些磨旧的，它们带着被摸过的痕迹。', vector: { nostalgia: 3, texture: 1 } },
+      { id: 'B', text: '你喜欢那些还完好的，像时光没有磨损它们。', vector: { nostalgia: 2, order: 1, texture: 1 } },
       { id: 'C', text: '你一张张看过去，分不清更喜欢哪一张。', vector: { nostalgia: 2, inward: 1 } },
       { id: 'D', text: '你合上相册，放回抽屉。', vector: { order: 1 } },
     ] },
@@ -141,7 +141,7 @@ module.exports = [
   { id: 15, format: 'night', context: null,
     prompt: '深夜，你站在窗前，整座城市都在脚下睡着了。',
     options: [
-      { id: 'A', text: '你享受这高高在上的旁观，谁也不会打扰你。', vector: { inward: 2, space: 1 } },
+      { id: 'A', text: '你享受这高高在上的旁观，谁也不会打扰你。', vector: { inward: 2, space: 1, aura: 1 } },
       { id: 'B', text: '你看着万家灯火，觉得温暖又遥远。', vector: { melancholy: 2, warmth: 1 } },
       { id: 'C', text: '你想，这一刻有人也醒着吗。', vector: { warmth: 2 } },
       { id: 'D', text: '你拉上窗帘，转身去睡。', vector: { order: 1 } },
@@ -266,7 +266,7 @@ module.exports = [
     prompt: '你飘在半空，脚下是辽阔的原野；不远处，有一间亮着灯的小屋。',
     options: [
       { id: 'A', text: '你被这片辽阔震住，觉得自己渺小又自由。', vector: { aura: 3 } },
-      { id: 'B', text: '你更想落回那间小屋，缩进熟悉的温暖里。', vector: { warmth: 2, space: 1 } },
+      { id: 'B', text: '你更想落回那间小屋，缩进熟悉的温暖里。', vector: { warmth: 2, space: 1, texture: 1 } },
       { id: 'C', text: '你既想停在半空看远方，也惦记屋里的灯。', vector: { aura: 1, warmth: 1 } },
       { id: 'D', text: '你只觉得冷，想快点落地。', vector: { order: 1 } },
     ] },
@@ -297,7 +297,7 @@ module.exports = [
   { id: 34, format: 'drift', context: null,
     prompt: '你像一片叶子，从树上落下，在空中转了好几圈才落地。',
     options: [
-      { id: 'A', text: '你享受那几圈，慢、轻、没有目的地。', vector: { space: 2, groove: 1 } },
+      { id: 'A', text: '你享受那几圈，慢、轻、没有目的地。', vector: { space: 2, groove: 1, texture: 1 } },
       { id: 'B', text: '你有点舍不得离开树，落地像告别。', vector: { melancholy: 2, nostalgia: 1 } },
       { id: 'C', text: '你更想快点落地，落定才安心。', vector: { order: 2 } },
       { id: 'D', text: '你从没想过当一片叶子。', vector: { groove: 1 } },
@@ -373,7 +373,7 @@ module.exports = [
   { id: 43, format: 'surge', context: null,
     prompt: '号角声响起，一场属于你的战役就要打响。',
     options: [
-      { id: 'A', text: '你热血上涌，第一个冲在最前面。', vector: { intensity: 3 } },
+      { id: 'A', text: '你热血上涌，第一个冲在最前面。', vector: { intensity: 3, aura: 1 } },
       { id: 'B', text: '你握紧拳头，心里已经排好了战术。', vector: { order: 2, intensity: 1 } },
       { id: 'C', text: '你和身边的伙伴对视一眼，一起上。', vector: { warmth: 2, groove: 1 } },
       { id: 'D', text: '你有点犹豫，想先看看局势。', vector: { inward: 1 } },

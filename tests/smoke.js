@@ -49,6 +49,28 @@ for (const d of fs.readdirSync(path.join(ROOT, 'tests')).sort()) {
       }
     }
   }
+
+  // 维度覆盖下限：每个核心维至少被 N 道题触及（防"难写维"覆盖不足导致噪声大）。
+  // 触及 = 该题主选项里有任一选项在该维有非零系数。
+  const COV_MIN = 12;
+  const cov = Object.fromEntries(dims.map((k) => [k, 0]));
+  for (const q of t.questions) for (const k of dims) if (q.options.some((o) => o.vector && o.vector[k])) cov[k]++;
+  for (const k of dims) {
+    if (cov[k] < COV_MIN) failures.push(d + ': 维度「' + k + '」覆盖不足 (' + cov[k] + ' 题 < ' + COV_MIN + ')');
+  }
+
+  // 撞脸检查：任意两个实体两两中心化余弦 >0.90 即报错（被近亲吞噬者会成为"死实体"）。
+  const cosine = (u, w) => {
+    let dot = 0, nu = 0, nw = 0;
+    for (const k of dims) { const a = u[k] - 5, b = w[k] - 5; dot += a * b; nu += a * a; nw += b * b; }
+    if (!nu || !nw) return 0;
+    return dot / Math.sqrt(nu * nw);
+  };
+  for (let i = 0; i < t.entities.length; i++) for (let j = i + 1; j < t.entities.length; j++) {
+    const s = cosine(t.entities[i], t.entities[j]);
+    if (s > 0.90) failures.push(d + ': 撞脸 ' + t.entities[i].name + ' ~ ' + t.entities[j].name + ' (' + s.toFixed(2) + ')');
+  }
+
   console.log('  ✔ ' + d.padEnd(18) + ' dims=' + dims.length + '  entities=' + t.entities.length + '  questions=' + t.questions.length);
 }
 

@@ -41,6 +41,8 @@ module.exports = {
   booksTitle: '值得一读的原著',
   legendLabel: '最契合的角色',
   metaFields: ['works'], // 实体副标题行：显示出处著作，如《红楼梦》
+  foldRadar: true, // 结果页雷达图默认折叠（与其他包统一）
+  gradient: 'linear-gradient(135deg, #7a3a5a, #24101c)', // 分享卡默认主色（实体未配专属渐变时的兜底）
 
   dims: [
     { key: 'action', label: '行动', adj: '目标驱动' },

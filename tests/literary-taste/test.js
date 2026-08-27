@@ -41,6 +41,8 @@ module.exports = {
   booksTitle: '为你推荐的书',
   legendLabel: '最契合的作家',
   metaFields: ['region_era', 'works'], // 实体副标题行：按这些字段用 ' · ' 拼接
+  foldRadar: true, // 结果页雷达图默认折叠（与其他包统一）
+  gradient: 'linear-gradient(135deg, #4a6a8a, #1a2434)', // 分享卡默认主色（实体未配专属渐变时的兜底）
 
   dims: [
     { key: 'narrative', label: '叙事', adj: '情节驱动' },

@@ -23,7 +23,7 @@
 //     注意区分："往前看 / 不纠结"是 readability，"绕开 / 躲开一个具体刺激"才是 avoid。
 //   - society 只测"关心更大的世界 / 时代 / 群体 / 他人处境"，不测"帮人 / 利他"。
 //   - humor 测"反讽 / 自嘲 / 调侃 / 觉得荒诞好笑"。
-//   - desire 测"渴求 / 诱惑 / 占有 / 求而不得"，只出现在 desire 题型。
+//   - desire 测"渴求 / 诱惑 / 占有 / 求而不得"，集中在 desire 题型，部分情境题也会触及。
 //   - ambiguity 正负触及均衡；intensity 正负均衡。
 //   - patience 只出现在 commitment 题型，其余题型不写。
 
@@ -43,7 +43,7 @@ module.exports = [
       { id: 'A', text: '先排一份计划，把这一年用得有条理、最有价值。', vector: { form: 3 } },
       { id: 'B', text: '先离开熟悉的一切，看自己会变成什么样。', vector: { imagination: 3 } },
       { id: 'C', text: '去关注一个更大的问题，为它做点什么，留下一点改变。', vector: { society: 3 } },
-      { id: 'D', text: '回到某个念念不忘的地方，把没来得及感受的，慢慢补回来。', vector: { lyric: 3 } },
+      { id: 'D', text: '回到某个念念不忘的地方，把没来得及感受的，慢慢补回来。', vector: { lyric: 3, desire: 1 } },
     ] },
   { id: 3, format: 'reality', context: null,
     prompt: '你站在人生的一个岔路口，两条路都通向未知，没有人能告诉你哪条是对的。你会？',
@@ -101,12 +101,12 @@ module.exports = [
       { id: 'A', text: '选一个关键的选择，好奇如果当时不一样，现在会怎样。', vector: { narrative: 3 } },
       { id: 'B', text: '选一个我从未经历过的可能，看那会是什么样。', vector: { imagination: 3 } },
       { id: 'C', text: '选一个最平常的日子，想弄明白自己当时的心境。', vector: { philosophy: 2 } },
-      { id: 'D', text: '选一个再也回不去的地方，再闻一次那时的空气。', vector: { lyric: 3 } },
+      { id: 'D', text: '选一个再也回不去的地方，再闻一次那时的空气。', vector: { lyric: 3, desire: 1 } },
     ] },
   { id: 10, format: 'fantasy', context: null,
     prompt: '你得到一次机会，能听见一个人此刻心里最真实的一句话，但一生只有这一次。你会？',
     options: [
-      { id: 'A', text: '留到那个我最放不下的人，再问。', vector: { psychology: 2 } },
+      { id: 'A', text: '留到那个我最放不下的人，再问。', vector: { psychology: 2, desire: 1 } },
       { id: 'B', text: '想听一个已经离开的人，最后想对我说的。', vector: { lyric: 2 } },
       { id: 'C', text: '拿去听一个能影响很多人的人，此刻的真心。', vector: { society: 2, philosophy: 1 } },
       { id: 'D', text: '更好奇：听见之后，我会变成什么样。', vector: { imagination: 2, narrative: 1 }, hidden: { ambiguity: 1 } },
@@ -115,7 +115,7 @@ module.exports = [
     prompt: '你有一张地图，能去任何想去的地方，但一生只能用三次。你会？',
     options: [
       { id: 'A', text: '先规划这三次，把它们用在最值得的地方。', vector: { form: 3 } },
-      { id: 'B', text: '留一次给"最想逃离一切"的那个瞬间，其余随缘。', vector: { imagination: 2, philosophy: 1 } },
+      { id: 'B', text: '留一次给"最想逃离一切"的那个瞬间，其余随缘。', vector: { imagination: 2, philosophy: 1, desire: 1 } },
       { id: 'C', text: '去一个只存在于地图上的地方，看它是不是真的。', vector: { imagination: 3 } },
       { id: 'D', text: '不太敢要，怕用完三次，反而更失落。', vector: {}, avoid: true, hidden: { intensity: -1, ambiguity: -1 } },
     ] },
@@ -214,7 +214,7 @@ module.exports = [
   { id: 23, format: 'inner', context: null,
     prompt: '一个完全空出来的下午，天光很好，也没人找你。你会？',
     options: [
-      { id: 'A', text: '翻旧照片、旧消息，把过去的事慢慢过一遍。', vector: { psychology: 3 } },
+      { id: 'A', text: '翻旧照片、旧消息，把过去的事慢慢过一遍。', vector: { psychology: 3, desire: 1 } },
       { id: 'B', text: '幻想一些从没发生、甚至不可能发生的事。', vector: { imagination: 3 } },
       { id: 'C', text: '列个清单，把一直拖着的事一件件做掉。', vector: { form: 2 } },
       { id: 'D', text: '放一张老唱片，或看部老电影，让情绪沉进去。', vector: { lyric: 3 } },
@@ -230,7 +230,7 @@ module.exports = [
   { id: 25, format: 'inner', context: null,
     prompt: '一句话、一段旋律、一个画面，毫无征兆地让你眼眶一热。那一刻你会？',
     options: [
-      { id: 'A', text: '想把那种感觉留住，反复地回味。', vector: { lyric: 3 }, hidden: { intensity: 1 } },
+      { id: 'A', text: '想把那种感觉留住，反复地回味。', vector: { lyric: 3, desire: 1 }, hidden: { intensity: 1 } },
       { id: 'B', text: '想弄清楚，它为什么偏偏戳中了我。', vector: { psychology: 2, philosophy: 1 } },
       { id: 'C', text: '立刻分享给那个懂的人。', vector: { lyric: 2 } },
       { id: 'D', text: '把它拆开看——这段旋律、这个画面，是怎么做到的。', vector: { form: 3 } },
@@ -238,7 +238,7 @@ module.exports = [
   { id: 26, format: 'inner', context: null,
     prompt: '一段很重要的关系结束了。过了很久，你最常回想的，是？',
     options: [
-      { id: 'A', text: '那些没能说出口的话。', vector: { lyric: 3 }, hidden: { intensity: 1 } },
+      { id: 'A', text: '那些没能说出口的话。', vector: { lyric: 3, desire: 1 }, hidden: { intensity: 1 } },
       { id: 'B', text: '自己当时哪里做得不够好。', vector: { psychology: 3 } },
       { id: 'C', text: '如果当初走了另一条路，现在会怎样。', vector: { imagination: 2, narrative: 2 } },
       { id: 'D', text: '很少再想，人得往前看。', vector: { readability: 2 } },
