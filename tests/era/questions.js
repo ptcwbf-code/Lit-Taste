@@ -76,7 +76,7 @@ module.exports = [
     prompt: '破晓时分，世界最像——',
     options: [
       { id: 'A', text: '一张白纸，等着被写上字。', vector: { gold: 2, mind: 1 } },
-      { id: 'B', text: '一场仪式，值得认真对待。', vector: { faith: 2, rule: 1 } },
+      { id: 'B', text: '一场仪式，值得认真对待。', vector: { grace: 2, faith: 1 } },
       { id: 'C', text: '一扇门，推开就是远方。', vector: { quest: 2 } },
       { id: 'D', text: '你从没想过这个问题。', vector: {} },
     ] },
