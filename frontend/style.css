@@ -322,6 +322,12 @@ button.ghost:hover { border-color: var(--gold); background: var(--gold-soft); }
   padding: 22px 22px; cursor: pointer; transition: all .15s ease;
 }
 .catalog-card:hover { border-color: var(--gold); background: var(--surface-2); transform: translateY(-1px); }
+.catalog-card.tinted { border-color: rgba(255,255,255,.28); color: #fff; }
+.catalog-card.tinted:hover { border-color: rgba(255,255,255,.55); background: var(--surface-2); filter: brightness(1.06); }
+.catalog-card.tinted .catalog-badge { color: #f5ead2; border-color: rgba(245,234,210,.8); background: rgba(0,0,0,.22); }
+.catalog-card.tinted .catalog-count { color: rgba(255,255,255,.7); }
+.catalog-card.tinted .catalog-title { color: #fff; }
+.catalog-card.tinted .catalog-lead { color: rgba(255,255,255,.82); }
 .catalog-emoji { font-size: 42px; line-height: 1; flex: none; }
 .catalog-info { flex: 1; min-width: 0; }
 .catalog-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }

@@ -132,6 +132,7 @@ function catalogItem(t) {
   return {
     id: t.id, title: t.title, heading: t.heading, lead: t.lead,
     metaBadge: t.metaBadge, emoji: t.emoji, questionCount: t.questions.length, entityCount: t.entities.length,
+    gradient: t.gradient || '', // 目录卡片的主色渐变（美学/时代包有专属配色）
   };
 }
 

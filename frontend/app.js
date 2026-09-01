@@ -58,7 +58,7 @@ function renderCatalog(list) {
     return;
   }
   document.getElementById('catalogBody').innerHTML = list.map((t) =>
-    '<div class="catalog-card" data-id="' + t.id + '">' +
+    '<div class="catalog-card' + (t.gradient ? ' tinted' : '') + '" data-id="' + t.id + '"' + (t.gradient ? ' style="background:' + t.gradient + '"' : '') + '>' +
       '<div class="catalog-emoji">' + (t.emoji || '🎯') + '</div>' +
       '<div class="catalog-info">' +
         '<div class="catalog-top">' +
@@ -619,11 +619,25 @@ function makeNoise(w, h) {
   return c;
 }
 
-// 时代印章：圆形印戳（时代字 + 双细环，朱红），像盖在明信片上的戳记
+// 时代印章 / 美学角标：圆形戳记。传 emoji（美学流派的视觉符号）画金色双圆环角标；
+// 传中文（时代的印章文字）画朱红印戳（双细环 + 时代字）。
 function drawSeal(ctx, cx, cy, r, text, serif) {
+  const isEmoji = /\p{Extended_Pictographic}/u.test(text || '');
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate(-Math.PI / 30);
+  if (isEmoji) {
+    // 金色角标：双圆环 + 中间流派符号
+    ctx.strokeStyle = 'rgba(232,187,99,.9)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
+    ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(232,187,99,.5)';
+    ctx.beginPath(); ctx.arc(0, 0, r - 9, 0, Math.PI * 2); ctx.stroke();
+    ctx.font = '46px "Segoe UI Emoji", "Noto Color Emoji", serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text || '', 0, 2);
+    ctx.restore();
+    return;
+  }
   ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(178,48,40,.92)';
   ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
   ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(178,48,40,.7)';
@@ -632,7 +646,6 @@ function drawSeal(ctx, cx, cy, r, text, serif) {
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   const chars = Array.from(text || '');
   if (chars.length >= 4) {
-    // 2×2 竖排，像篆刻印文
     ctx.font = 'bold 26px ' + serif;
     ctx.fillText(chars[0], -14, -14);
     ctx.fillText(chars[1], 14, -14);
