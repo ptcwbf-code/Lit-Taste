@@ -22,8 +22,8 @@ module.exports = [
   { name: '🎀 Coquette', en: 'Coquette', luminance: 7, dulcet: 9, ornate: 6, retro: 5, organic: 4, unruly: 7, numinous: 4, childlike: 4, theatrical: 9, ethereal: 7, tags: '娇媚少女、蝴蝶结、柔美轻佻' },
   { name: '🍬 Sweet Lolita', en: 'Sweet Lolita', luminance: 8, dulcet: 10, ornate: 9, retro: 6, organic: 3, unruly: 4, numinous: 3, childlike: 9, theatrical: 6, ethereal: 7, tags: '甜系洛丽塔、蕾丝、童话' },
   { name: '🧸 Kawaii', en: 'Kawaii', luminance: 10, dulcet: 9, ornate: 5, retro: 4, organic: 4, unruly: 2, numinous: 3, childlike: 10, theatrical: 3, ethereal: 6, tags: '卡哇伊、糖果色、圆润可爱' },
-  { name: '🍓 Strawberry Girl', en: 'Strawberry Girl', luminance: 9, dulcet: 7, ornate: 4, retro: 7, organic: 7, unruly: 3, numinous: 4, childlike: 6, theatrical: 2, ethereal: 3, tags: '草莓女孩、红粉、田园甜心' },
-  { name: '☁️ Softie', en: 'Softie', luminance: 6, dulcet: 10, ornate: 3, retro: 4, organic: 4, unruly: 1, numinous: 6, childlike: 8, theatrical: 1, ethereal: 6, tags: '软妹系、云朵、温柔' },
+  { name: '🍓 Strawberry Girl', en: 'Strawberry Girl', luminance: 9, dulcet: 6, ornate: 4, retro: 7, organic: 6, unruly: 3, numinous: 4, childlike: 6, theatrical: 2, ethereal: 3, tags: '草莓女孩、红粉、田园甜心' },
+  { name: '☁️ Softie', en: 'Softie', luminance: 6, dulcet: 10, ornate: 3, retro: 3, organic: 4, unruly: 1, numinous: 6, childlike: 8, theatrical: 1, ethereal: 6, tags: '软妹系、云朵、温柔' },
   { name: '👑 Princesscore', en: 'Princesscore', luminance: 6, dulcet: 7, ornate: 9, retro: 7, organic: 3, unruly: 1, numinous: 6, childlike: 6, theatrical: 7, ethereal: 5, tags: '公主核、城堡、缎带' },
   { name: '💗 Barbiecore', en: 'Barbiecore', luminance: 10, dulcet: 5, ornate: 5, retro: 4, organic: 2, unruly: 5, numinous: 1, childlike: 7, theatrical: 9, ethereal: 2, tags: '芭比核、亮粉、张扬自信' },
   { name: '🌸 Girly Girl', en: 'Girly Girl', luminance: 7, dulcet: 7, ornate: 4, retro: 3, organic: 5, unruly: 1, numinous: 3, childlike: 8, theatrical: 3, ethereal: 2, tags: '少女系、闺蜜、甜点' },
@@ -39,11 +39,11 @@ module.exports = [
   { name: '💋 Dark Feminine', en: 'Dark Feminine', luminance: 5, dulcet: 4, ornate: 6, retro: 5, organic: 2, unruly: 10, numinous: 2, childlike: 2, theatrical: 9, ethereal: 7, tags: '暗黑女性风、黑红、危险魅力' },
 
   // —— 三、自然与灵（原生灵性系，8）——
-  { name: '🌿 Naturecore', en: 'Naturecore', luminance: 6, dulcet: 5, ornate: 3, retro: 4, organic: 10, unruly: 5, numinous: 7, childlike: 4, theatrical: 2, ethereal: 5, tags: '自然核、苔藓、森林' },
+  { name: '🌿 Naturecore', en: 'Naturecore', luminance: 6, dulcet: 3, ornate: 3, retro: 4, organic: 10, unruly: 5, numinous: 7, childlike: 4, theatrical: 2, ethereal: 5, tags: '自然核、苔藓、森林' },
   { name: '🕊️ Angelcore', en: 'Angelcore', luminance: 8, dulcet: 7, ornate: 5, retro: 4, organic: 5, unruly: 2, numinous: 10, childlike: 5, theatrical: 4, ethereal: 8, tags: '天使核、羽翼、圣洁白光' },
   { name: '🧚 Fairycore', en: 'Fairycore', luminance: 7, dulcet: 7, ornate: 6, retro: 5, organic: 8, unruly: 4, numinous: 7, childlike: 6, theatrical: 5, ethereal: 9, tags: '仙女核、森林精灵、露珠' },
-  { name: '🏺 Kintsugi', en: 'Kintsugi', luminance: 5, dulcet: 5, ornate: 7, retro: 7, organic: 7, unruly: 3, numinous: 8, childlike: 3, theatrical: 3, ethereal: 5, tags: '金缮、金线修补、残缺之美' },
-  { name: '🍞 Cottagecore', en: 'Cottagecore', luminance: 6, dulcet: 6, ornate: 4, retro: 7, organic: 9, unruly: 2, numinous: 6, childlike: 4, theatrical: 2, ethereal: 5, tags: '田园核、面包、野花' },
+  { name: '🏺 Kintsugi', en: 'Kintsugi', luminance: 5, dulcet: 4, ornate: 7, retro: 6, organic: 5, unruly: 3, numinous: 8, childlike: 3, theatrical: 3, ethereal: 5, tags: '金缮、金线修补、残缺之美' },
+  { name: '🍞 Cottagecore', en: 'Cottagecore', luminance: 6, dulcet: 6, ornate: 4, retro: 7, organic: 9, unruly: 2, numinous: 5, childlike: 4, theatrical: 2, ethereal: 5, tags: '田园核、面包、野花' },
   { name: '🍃 Art Nouveau', en: 'Art Nouveau', luminance: 7, dulcet: 6, ornate: 9, retro: 8, organic: 8, unruly: 3, numinous: 4, childlike: 3, theatrical: 5, ethereal: 5, tags: '新艺术、藤蔓、流动曲线' },
   { name: '🕯️ Symbolism', en: 'Symbolism', luminance: 4, dulcet: 2, ornate: 5, retro: 6, organic: 4, unruly: 5, numinous: 10, childlike: 3, theatrical: 6, ethereal: 9, tags: '象征主义、隐喻、梦' },
   { name: '🗡️ Dark Fantasy', en: 'Dark Fantasy', luminance: 3, dulcet: 2, ornate: 7, retro: 6, organic: 4, unruly: 6, numinous: 6, childlike: 2, theatrical: 9, ethereal: 9, tags: '黑暗奇幻、古堡、幽暗史诗' },
@@ -56,7 +56,7 @@ module.exports = [
   { name: '⚙️ Steampunk', en: 'Steampunk', luminance: 4, dulcet: 3, ornate: 8, retro: 9, organic: 5, unruly: 5, numinous: 2, childlike: 3, theatrical: 6, ethereal: 3, tags: '蒸汽朋克、黄铜、齿轮' },
   { name: '🌆 Synthwave', en: 'Synthwave', luminance: 7, dulcet: 3, ornate: 5, retro: 9, organic: 2, unruly: 4, numinous: 2, childlike: 3, theatrical: 7, ethereal: 6, tags: '合成器浪潮、霓虹、复古80s' },
   { name: '📽️ Vintagecore', en: 'Vintagecore', luminance: 5, dulcet: 5, ornate: 6, retro: 10, organic: 5, unruly: 3, numinous: 5, childlike: 4, theatrical: 3, ethereal: 4, tags: '复古核、旧物、胶片' },
-  { name: '🫧 Frutiger Aero', en: 'Frutiger Aero', luminance: 9, dulcet: 6, ornate: 3, retro: 6, organic: 6, unruly: 2, numinous: 6, childlike: 4, theatrical: 2, ethereal: 6, tags: '玻璃气泡、清爽乐观未来' },
+  { name: '🫧 Frutiger Aero', en: 'Frutiger Aero', luminance: 9, dulcet: 5, ornate: 3, retro: 6, organic: 5, unruly: 2, numinous: 6, childlike: 4, theatrical: 2, ethereal: 5, tags: '玻璃气泡、清爽乐观未来' },
 
   // —— 五、都市亚文化与设计（反叛张扬系，8）——
   { name: '💅 Gyaru', en: 'Gyaru', luminance: 9, dulcet: 5, ornate: 6, retro: 2, organic: 3, unruly: 9, numinous: 2, childlike: 3, theatrical: 10, ethereal: 3, tags: '辣妹系、染发、浓妆' },
