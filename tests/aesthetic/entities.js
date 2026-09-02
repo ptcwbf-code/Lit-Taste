@@ -20,12 +20,12 @@
 module.exports = [
   // —— 一、光与甜（甜美明亮系，8）——
   { name: '🎀 Coquette', en: 'Coquette', luminance: 7, dulcet: 9, ornate: 6, retro: 5, organic: 4, unruly: 7, numinous: 4, childlike: 4, theatrical: 9, ethereal: 7, tags: '娇媚少女、蝴蝶结、柔美轻佻' },
-  { name: '🍬 Sweet Lolita', en: 'Sweet Lolita', luminance: 8, dulcet: 10, ornate: 9, retro: 6, organic: 3, unruly: 4, numinous: 3, childlike: 9, theatrical: 6, ethereal: 7, tags: '甜系洛丽塔、蕾丝、童话' },
+  { name: '🍬 Sweet Lolita', en: 'Sweet Lolita', luminance: 8, dulcet: 10, ornate: 10, retro: 6, organic: 3, unruly: 4, numinous: 3, childlike: 8, theatrical: 6, ethereal: 7, tags: '甜系洛丽塔、蕾丝、童话' },
   { name: '🧸 Kawaii', en: 'Kawaii', luminance: 10, dulcet: 9, ornate: 5, retro: 4, organic: 4, unruly: 2, numinous: 3, childlike: 10, theatrical: 3, ethereal: 6, tags: '卡哇伊、糖果色、圆润可爱' },
   { name: '🍓 Strawberry Girl', en: 'Strawberry Girl', luminance: 9, dulcet: 6, ornate: 4, retro: 7, organic: 6, unruly: 3, numinous: 4, childlike: 6, theatrical: 2, ethereal: 3, tags: '草莓女孩、红粉、田园甜心' },
   { name: '☁️ Softie', en: 'Softie', luminance: 6, dulcet: 10, ornate: 3, retro: 3, organic: 4, unruly: 1, numinous: 6, childlike: 8, theatrical: 1, ethereal: 6, tags: '软妹系、云朵、温柔' },
   { name: '👑 Princesscore', en: 'Princesscore', luminance: 6, dulcet: 7, ornate: 9, retro: 7, organic: 3, unruly: 1, numinous: 6, childlike: 6, theatrical: 7, ethereal: 5, tags: '公主核、城堡、缎带' },
-  { name: '💗 Barbiecore', en: 'Barbiecore', luminance: 10, dulcet: 5, ornate: 5, retro: 4, organic: 2, unruly: 5, numinous: 1, childlike: 7, theatrical: 9, ethereal: 2, tags: '芭比核、亮粉、张扬自信' },
+  { name: '💗 Barbiecore', en: 'Barbiecore', luminance: 10, dulcet: 6, ornate: 5, retro: 4, organic: 2, unruly: 4, numinous: 1, childlike: 8, theatrical: 8, ethereal: 1, tags: '芭比核、亮粉、张扬自信' },
   { name: '🌸 Girly Girl', en: 'Girly Girl', luminance: 7, dulcet: 7, ornate: 4, retro: 3, organic: 5, unruly: 1, numinous: 3, childlike: 8, theatrical: 3, ethereal: 2, tags: '少女系、闺蜜、甜点' },
 
   // —— 二、暗与诡（暗黑怪诞系，8）——
@@ -60,10 +60,10 @@ module.exports = [
 
   // —— 五、都市亚文化与设计（反叛张扬系，8）——
   { name: '💅 Gyaru', en: 'Gyaru', luminance: 9, dulcet: 5, ornate: 6, retro: 2, organic: 3, unruly: 9, numinous: 2, childlike: 3, theatrical: 10, ethereal: 3, tags: '辣妹系、染发、浓妆' },
-  { name: '🌃 Cyberpunk', en: 'Cyberpunk', luminance: 5, dulcet: 2, ornate: 6, retro: 3, organic: 2, unruly: 8, numinous: 1, childlike: 2, theatrical: 4, ethereal: 6, tags: '赛博朋克、霓虹、雨夜高楼' },
-  { name: '🌑 Jirai Kei', en: 'Jirai Kei', luminance: 4, dulcet: 5, ornate: 7, retro: 6, organic: 4, unruly: 7, numinous: 4, childlike: 6, theatrical: 7, ethereal: 5, tags: '地雷系、甜美外壳、锋利内核' },
+  { name: '🌃 Cyberpunk', en: 'Cyberpunk', luminance: 5, dulcet: 2, ornate: 6, retro: 3, organic: 2, unruly: 9, numinous: 1, childlike: 2, theatrical: 4, ethereal: 4, tags: '赛博朋克、霓虹、雨夜高楼' },
+  { name: '🌑 Jirai Kei', en: 'Jirai Kei', luminance: 4, dulcet: 6, ornate: 6, retro: 6, organic: 4, unruly: 7, numinous: 4, childlike: 7, theatrical: 6, ethereal: 5, tags: '地雷系、甜美外壳、锋利内核' },
   { name: '🎭 Visual Kei', en: 'Visual Kei', luminance: 4, dulcet: 2, ornate: 10, retro: 4, organic: 2, unruly: 7, numinous: 2, childlike: 2, theatrical: 10, ethereal: 3, tags: '视觉系、华丽、雌雄同体' },
-  { name: '🌈 Scene', en: 'Scene', luminance: 8, dulcet: 3, ornate: 5, retro: 4, organic: 3, unruly: 9, numinous: 2, childlike: 8, theatrical: 8, ethereal: 3, tags: '场景系、彩虹、直发' },
+  { name: '🌈 Scene', en: 'Scene', luminance: 8, dulcet: 3, ornate: 5, retro: 4, organic: 3, unruly: 8, numinous: 2, childlike: 7, theatrical: 9, ethereal: 3, tags: '场景系、彩虹、直发' },
   { name: '🏗️ Brutalism', en: 'Brutalism', luminance: 2, dulcet: 2, ornate: 1, retro: 4, organic: 9, unruly: 7, numinous: 4, childlike: 2, theatrical: 3, ethereal: 3, tags: '粗野主义、裸露混凝土、反装饰' },
   { name: '🟥 Memphis Design', en: 'Memphis Design', luminance: 9, dulcet: 6, ornate: 9, retro: 5, organic: 2, unruly: 7, numinous: 2, childlike: 9, theatrical: 7, ethereal: 4, tags: '孟菲斯设计、几何、鲜艳玩具感' },
   { name: '🥂 Art Deco', en: 'Art Deco', luminance: 6, dulcet: 3, ornate: 10, retro: 9, organic: 2, unruly: 5, numinous: 3, childlike: 2, theatrical: 7, ethereal: 4, tags: '装饰艺术、几何对称、黑金奢华' },
@@ -71,8 +71,8 @@ module.exports = [
   // —— 六、艺术流派（经典与先锋，8）——
   { name: '🌊 Romanticism', en: 'Romanticism', luminance: 4, dulcet: 4, ornate: 5, retro: 6, organic: 8, unruly: 6, numinous: 7, childlike: 2, theatrical: 8, ethereal: 7, tags: '浪漫主义、风暴废墟、崇高激情' },
   { name: '🎨 Impressionism', en: 'Impressionism', luminance: 6, dulcet: 4, ornate: 3, retro: 7, organic: 7, unruly: 3, numinous: 4, childlike: 3, theatrical: 3, ethereal: 7, tags: '印象派、光影、瞬间空气感' },
-  { name: '⬜ Minimalism', en: 'Minimalism', luminance: 5, dulcet: 3, ornate: 1, retro: 4, organic: 4, unruly: 4, numinous: 6, childlike: 3, theatrical: 2, ethereal: 5, tags: '极简主义、留白、线条' },
-  { name: '🃏 Dada', en: 'Dada', luminance: 5, dulcet: 3, ornate: 5, retro: 5, organic: 4, unruly: 10, numinous: 3, childlike: 6, theatrical: 8, ethereal: 5, tags: '达达主义、拼贴、反艺术' },
+  { name: '⬜ Minimalism', en: 'Minimalism', luminance: 6, dulcet: 3, ornate: 1, retro: 4, organic: 5, unruly: 4, numinous: 7, childlike: 3, theatrical: 2, ethereal: 4, tags: '极简主义、留白、线条' },
+  { name: '🃏 Dada', en: 'Dada', luminance: 6, dulcet: 5, ornate: 5, retro: 5, organic: 5, unruly: 10, numinous: 2, childlike: 9, theatrical: 6, ethereal: 5, tags: '达达主义、拼贴、反艺术' },
   { name: '👁️ Surrealism', en: 'Surrealism', luminance: 3, dulcet: 2, ornate: 6, retro: 4, organic: 3, unruly: 9, numinous: 4, childlike: 3, theatrical: 6, ethereal: 10, tags: '超现实主义、梦境、错位' },
   { name: '🖌️ Expressionism', en: 'Expressionism', luminance: 3, dulcet: 2, ornate: 3, retro: 4, organic: 3, unruly: 9, numinous: 3, childlike: 2, theatrical: 10, ethereal: 5, tags: '表现主义、强烈情绪、扭曲' },
   { name: '🏛️ Baroque', en: 'Baroque', luminance: 6, dulcet: 4, ornate: 10, retro: 7, organic: 2, unruly: 2, numinous: 8, childlike: 2, theatrical: 9, ethereal: 4, tags: '巴洛克、金箔、过盛华丽' },
