@@ -29,7 +29,7 @@ module.exports = [
     prompt: '如果一间房间只能有一种颜色，你会选——',
     options: [
       { id: 'A', text: '奶白或米色，干净又温柔。', vector: { luminance: 2, dulcet: 1 } },
-      { id: 'B', text: '墨黑或深绿，沉静有分量。', vector: { numinous: 1 } },
+      { id: 'B', text: '墨黑或深绿，沉静有分量。', vector: { numinous: 2 } },
       { id: 'C', text: '雾蓝或灰紫，介于梦与现实之间。', vector: { ethereal: 2 } },
       { id: 'D', text: '我不在乎颜色，功能舒服就行。', vector: {}, avoid: true },
     ] },
@@ -242,7 +242,7 @@ module.exports = [
   { id: 27, format: 'garb', context: null,
     prompt: '如果要给自己一个"日常的样子"，你更偏——',
     options: [
-      { id: 'A', text: '干净利落，越简单越好。', vector: { numinous: 1, luminance: 1 } },
+      { id: 'A', text: '干净利落，清爽明亮。', vector: { luminance: 2 } },
       { id: 'B', text: '有点戏剧感，让人多看一眼。', vector: { theatrical: 2, dulcet: 1 } },
       { id: 'C', text: '按自己舒服来，不管别人怎么看。', vector: { unruly: 2 } },
       { id: 'D', text: '没想过这个问题。', vector: {}, avoid: true },
